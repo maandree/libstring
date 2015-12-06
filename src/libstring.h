@@ -32,49 +32,170 @@
 
 enum libstring_split
 {
-  LIBSTRING_REPLACE_FROM_RIGHT,
-  LIBSTRING_REPLACE_IGNORE_CASE,
+  /**
+   * Match from right to left, rather
+   * than from left to right.
+   */
+  LIBSTRING_SPLIT_FROM_RIGHT,
+  
+  /**
+   * Ignore case when matching.
+   */
+  LIBSTRING_SPLIT_IGNORE_CASE,
 };
+
 
 enum libstring_replace
 {
+  /**
+   * Match from right to left, rather
+   * than from left to right.
+   */
   LIBSTRING_REPLACE_FROM_RIGHT,
+  
+  /**
+   * Ignore case when matching.
+   */
   LIBSTRING_REPLACE_IGNORE_CASE,
 };
 
+
 enum libstring_length
 {
+  /**
+   * Do not count combining diacritical
+   * marks as contributing to the length
+   * of the string.
+   */
   LIBSTRING_LENGTH_IGNORE_COMBINING,
+  
+  /**
+   * Guess who many columns will be used
+   * when displayed in a terminal. Unless
+   * `LIBSTRING_LENGTH_IGNORE_COMBINING`
+   * is also used, combining diacritical
+   * marks ware assumed to not combine.
+   */
   LIBSTRING_LENGTH_DISPLAY_LENGTH,
 };
 
+
 enum libstring_utf8verify
 {
+  /**
+   * Accept 0xC0 0x80 as a valid
+   * byte sequence.
+   */
   LIBSTRING_UTF8VERIFY_MOD_UTF8,
-  LIBSTRING_UTF8VERIFY_31_BITS,
-  LIBSTRING_UTF8VERIFY_UNLIMITED_BITS,
+  
+  /**
+   * Do not require that characters are
+   * encoded with as short byte sequence
+   * as possible. This implies
+   * `LIBSTRING_UTF8VERIFY_MOD_UTF8`.
+   */
   LIBSTRING_UTF8VERIFY_LAX,
+  
+  /**
+   * Use the old specification: characters
+   * are at most 31 bits, rather than the
+   * new standard: 10FFFF is the highest
+   * character (end if plane 16.)
+   */
+  LIBSTRING_UTF8VERIFY_31_BITS,
+  
+  /**
+   * Implies `LIBSTRING_UTF8VERIFY_31_BITS`
+   * but extends to one additional bits,
+   * allowing negative code points for
+   * private use.
+   */
+  LIBSTRING_UTF8VERIFY_32_BITS,
+  
+  /**
+   * Implies `LIBSTRING_UTF8VERIFY_32_BITS` 
+   * but extend to allow 8 bytes (42 bits),
+   * which is the highest that can be encoded
+   * with only one byte that specifies the
+   * width of the sequence.
+   */
+  LIBSTRING_UTF8VERIFY_8_BYTES,
 };
+
 
 enum libstring_cut
 {
+  /**
+   * Match from right to left, rather than
+   * from left to right.
+   */
   LIBSTRING_CUT_FROM_RIGHT,
+  
+  /**
+   * Ignore case when matching.
+   */
   LIBSTRING_CUT_IGNORE_CASE,
-  LIBSTRING_CUT_OUTPUT_DELIMITER,
+  
+  /**
+   * Fields are returned in sorted order,
+   * rather than the specified order.
+   */
+  LIBSTRING_CUT_ORDERED,
+  
+  /**
+   * The all fields except the specified
+   * fields shall be returned. This
+   * implies `LIBSTRING_CUT_ORDERED`.
+   */
   LIBSTRING_CUT_COMPLEMENT,
 };
 
+
 enum libstring_substring
 {
+  /**
+   * The third parameter is the length
+   * rather than the end.
+   */
   LIBSTRING_SUBSTRING_LENGTH,
+  
+  /**
+   * Count from the end rather than from
+   * the beginning.
+   */
   LIBSTRING_SUBSTRING_FROM_END,
+  
+  /**
+   * Indicies are of bytes rather than
+   * of characters.
+   */
   LIBSTRING_SUBSTRING_BYTES,
 };
 
+
+/**
+ * If neither `LIBSTRING_TRIM_LEFT`,
+ * `LIBSTRING_TRIM_RIGHT`, nor
+ * `LIBSTRING_TRIM_DUPLICATES` is specified,
+ * `LIBSTRING_TRIM_LEFT` and `LIBSTRING_TRIM_RIGHT`
+ * will be used.
+ */
 enum libstring_trim
 {
+  /**
+   * Trim the beginning.
+   */
   LIBSTRING_TRIM_LEFT,
+  
+  /**
+   * Trim the end.
+   */
   LIBSTRING_TRIM_RIGHT,
+  
+  /**
+   * Deduplicate characters.
+   */
+  LIBSTRING_TRIM_DUPLICATES,
 };
 
 
