@@ -30,6 +30,9 @@
 
 
 
+/**
+ * Flags for `libstring_split`.
+ */
 enum libstring_split
 {
   /**
@@ -45,6 +48,9 @@ enum libstring_split
 };
 
 
+/**
+ * Flags for `libstring_replace`.
+ */
 enum libstring_replace
 {
   /**
@@ -60,6 +66,9 @@ enum libstring_replace
 };
 
 
+/**
+ * Flags for `libstring_length`.
+ */
 enum libstring_length
 {
   /**
@@ -70,7 +79,7 @@ enum libstring_length
   LIBSTRING_LENGTH_IGNORE_COMBINING,
   
   /**
-   * Guess who many columns will be used
+   * Guess how many columns will be used
    * when displayed in a terminal. Unless
    * `LIBSTRING_LENGTH_IGNORE_COMBINING`
    * is also used, combining diacritical
@@ -80,6 +89,9 @@ enum libstring_length
 };
 
 
+/**
+ * Flags for `libstring_utf8verify`.
+ */
 enum libstring_utf8verify
 {
   /**
@@ -123,6 +135,9 @@ enum libstring_utf8verify
 };
 
 
+/**
+ * Flags for `libstring_cut` and `libstring_vcut`.
+ */
 enum libstring_cut
 {
   /**
@@ -151,6 +166,9 @@ enum libstring_cut
 };
 
 
+/**
+ * Flags for `libstring_substring`.
+ */
 enum libstring_substring
 {
   /**
@@ -174,6 +192,8 @@ enum libstring_substring
 
 
 /**
+ * Flags for `libstring_trim`.
+ * 
  * If neither `LIBSTRING_TRIM_LEFT`,
  * `LIBSTRING_TRIM_RIGHT`, nor
  * `LIBSTRING_TRIM_DUPLICATES` is specified,
