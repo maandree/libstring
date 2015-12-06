@@ -24,6 +24,8 @@
 
 #ifdef __GNUC__
 # define LIBSTRING_GCC_ONLY(...)  __VA_ARGS__
+# define LIBSTRING_COMMON         __malloc__, __warn_unused_result__, __nonnull__
+# define LIBSTRING_LEAF           __leaf__, LIBSTRING_COMMON
 #else
 # define LIBSTRING_GCC_ONLY(...)  /* ignore */
 #endif
@@ -224,14 +226,14 @@ enum libstring_trim
  * @param   strings
  * @param   n
  */
-LIBSTRING_GCC_ONLY(__attribute__((__malloc__, __warn_unused_result__, __nonnull__(1))))
+LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_COMMON(1))))
 char* libstring_cat(const char* const*, const size_t*);
 
 
 /**
  * @param   strings...
  */
-LIBSTRING_GCC_ONLY(__attribute__((__malloc__, __warn_unused_result__, __nonnull__, __sentinel__(0), __leaf__)))
+LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF, __sentinel__(0))))
 char* libstring_vcat(const char*, ... /*, (char*)0 */);
 
 
@@ -240,7 +242,7 @@ char* libstring_vcat(const char*, ... /*, (char*)0 */);
  * @param   n
  * @param   delimiter
  */
-LIBSTRING_GCC_ONLY(__attribute__((__malloc__, __warn_unused_result__, __nonnull__(1, 3))))
+LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_COMMON(1, 3))))
 char* libstring_join(const char* const*, const size_t*, const char*);
 
 
@@ -248,7 +250,7 @@ char* libstring_join(const char* const*, const size_t*, const char*);
  * @param   strings...
  * @param   delimiter
  */
-LIBSTRING_GCC_ONLY(__attribute__((__malloc__, __warn_unused_result__, __nonnull__, __sentinel__(1), __leaf__)))
+LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF, __sentinel__(1))))
 char* libstring_vjoin(const char*, ... /*, (char*)0, const char* */);
 
 
@@ -258,7 +260,7 @@ char* libstring_vjoin(const char*, ... /*, (char*)0, const char* */);
  * @param   n
  * @param   flags
  */
-LIBSTRING_GCC_ONLY(__attribute__((__malloc__, __warn_unused_result__, __nonnull__(1, 2), __leaf__)))
+LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF(1, 2))))
 char** libstring_split(const char*, const char*, size_t*, enum libstring_split);
 
 
@@ -268,7 +270,7 @@ char** libstring_split(const char*, const char*, size_t*, enum libstring_split);
  * @param   to
  * @param   flags
  */
-LIBSTRING_GCC_ONLY(__attribute__((__malloc__, __warn_unused_result__, __nonnull__, __leaf__)))
+LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_replace(const char*, const char*, const char*, enum libstring_replace);
 
 
@@ -297,7 +299,7 @@ int libstring_utf8verify(const char*, enum libstring_utf8verify);
  * @param   n
  * @param   flags
  */
-LIBSTRING_GCC_ONLY(__attribute__((__malloc__, __warn_unused_result__, __nonnull__(1, 2, 3))))
+LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_COMMON(1, 2, 3))))
 char** libstring_cut(const char*, const char*, const size_t*, size_t, size_t*, enum libstring_cut);
 
 
@@ -308,8 +310,8 @@ char** libstring_cut(const char*, const char*, const size_t*, size_t, size_t*, e
  * @param   n
  * @param   flags
  */
-LIBSTRING_GCC_ONLY(__attribute__((__malloc__, __warn_unused_result__, __nonnull__(1, 2), __sentinel__(2), __leaf__)))
-char** libstring_vcut(const char*, const char*, size_t, ... /*, (char*)0, size_t*, enum libstring_cut */);
+LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF(1, 2))))
+char** libstring_vcut(const char*, const char*, size_t, ... /*, SIZE_MAX, size_t*, enum libstring_cut */);
 
 
 /**
@@ -318,7 +320,7 @@ char** libstring_vcut(const char*, const char*, size_t, ... /*, (char*)0, size_t
  * @param   end
  * @param   flags
  */
-LIBSTRING_GCC_ONLY(__attribute__((__malloc__, __warn_unused_result__, __nonnull__, __leaf__)))
+LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_substring(const char*, size_t, size_t, enum libstring_substring);
 
 
@@ -327,75 +329,81 @@ char* libstring_substring(const char*, size_t, size_t, enum libstring_substring)
  * @param   symbols
  * @param   flags
  */
-LIBSTRING_GCC_ONLY(__attribute__((__malloc__, __warn_unused_result__, __nonnull__(1), __leaf__)))
+LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF(1))))
 char* libstring_trim(const char*, const char*, enum libstring_trim);
 
 
 /**
  * @param   string
  */
-LIBSTRING_GCC_ONLY(__attribute__((__malloc__, __warn_unused_result__, __nonnull__, __leaf__)))
+LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_reverse(const char*);
 
 
 /**
  * @param   string
  */
-LIBSTRING_GCC_ONLY(__attribute__((__malloc__, __warn_unused_result__, __nonnull__, __leaf__)))
+LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_anagram(const char*);
 
 
 /**
  * @param   string
  */
-LIBSTRING_GCC_ONLY(__attribute__((__malloc__, __warn_unused_result__, __nonnull__, __leaf__)))
+LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_lcase(const char*);
 
 
 /**
  * @param   string
  */
-LIBSTRING_GCC_ONLY(__attribute__((__malloc__, __warn_unused_result__, __nonnull__, __leaf__)))
+LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_ucase(const char*);
 
 
 /**
  * @param   string
  */
-LIBSTRING_GCC_ONLY(__attribute__((__malloc__, __warn_unused_result__, __nonnull__, __leaf__)))
+LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_swapcase(const char*);
 
 
 /**
  * @param   string
  */
-LIBSTRING_GCC_ONLY(__attribute__((__malloc__, __warn_unused_result__, __nonnull__, __leaf__)))
+LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_expand(const char*);
 
 
 /**
  * @param   string
  */
-LIBSTRING_GCC_ONLY(__attribute__((__malloc__, __warn_unused_result__, __nonnull__, __leaf__)))
+LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_unexpand(const char*);
 
 
 /**
  * @param   string
  */
-LIBSTRING_GCC_ONLY(__attribute__((__malloc__, __warn_unused_result__, __nonnull__, __leaf__)))
+LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_rot13(const char*);
 
 
 /**
  * @param   string
  */
-LIBSTRING_GCC_ONLY(__attribute__((__malloc__, __warn_unused_result__, __nonnull__, __leaf__)))
+LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_double_rot13(const char*);
 
 
 
 #undef LIBSTRING_GCC_ONLY
+#ifdef LIBSTRING_COMMON
+# undef LIBSTRING_COMMON
+#endif
+#ifdef LIBSTRING_LEAF
+# undef LIBSTRING_LEAF
+#endif
 
 #endif
 
