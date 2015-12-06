@@ -220,70 +220,178 @@ enum libstring_trim
 
 
 
+/**
+ * @param   strings
+ * @param   n
+ */
 LIBSTRING_GCC_ONLY(__attribute__((__malloc__, __warn_unused_result__, __nonnull__(1))))
-char* libstring_cat(const char* const* strings, const size_t* n);
+char* libstring_cat(const char* const*, const size_t*);
 
+
+/**
+ * @param   strings...
+ */
 LIBSTRING_GCC_ONLY(__attribute__((__malloc__, __warn_unused_result__, __nonnull__, __sentinel__(0), __leaf__)))
-char* libstring_vcat(const char* strings, ... /*, (char*)0 */);
+char* libstring_vcat(const char*, ... /*, (char*)0 */);
 
+
+/**
+ * @param   strings
+ * @param   n
+ * @param   delimiter
+ */
 LIBSTRING_GCC_ONLY(__attribute__((__malloc__, __warn_unused_result__, __nonnull__(1, 3))))
-char* libstring_join(const char* const* strings, const size_t* n, const char* delimiter);
+char* libstring_join(const char* const*, const size_t*, const char*);
 
+
+/**
+ * @param   strings...
+ * @param   delimiter
+ */
 LIBSTRING_GCC_ONLY(__attribute__((__malloc__, __warn_unused_result__, __nonnull__, __sentinel__(1), __leaf__)))
-char* libstring_vjoin(const char* strings, ... /*, (char*)0, const char* delimiter */);
+char* libstring_vjoin(const char*, ... /*, (char*)0, const char* */);
 
+
+/**
+ * @param   delimiter
+ * @param   string
+ * @param   n
+ * @param   flags
+ */
 LIBSTRING_GCC_ONLY(__attribute__((__malloc__, __warn_unused_result__, __nonnull__(1, 2), __leaf__)))
-char** libstring_split(const char* delimiter, const char* string, size_t* n, enum libstring_split flags);
+char** libstring_split(const char*, const char*, size_t*, enum libstring_split);
 
+
+/**
+ * @param   string
+ * @param   from
+ * @param   to
+ * @param   flags
+ */
 LIBSTRING_GCC_ONLY(__attribute__((__malloc__, __warn_unused_result__, __nonnull__, __leaf__)))
-char* libstring_replace(const char* string, const char* from, const char* to, enum libstring_replace flags);
+char* libstring_replace(const char*, const char*, const char*, enum libstring_replace);
 
+
+/**
+ * @param   string
+ * @param   length
+ * @param   flags
+ */
 LIBSTRING_GCC_ONLY(__attribute__((__warn_unused_result__, __nonnull__, __leaf__)))
-size_t libstring_length(const char* string, size_t* length, enum libstring_length flags);
+size_t libstring_length(const char*, size_t*, enum libstring_length);
 
+
+/**
+ * @param   string
+ * @param   flags
+ */
 LIBSTRING_GCC_ONLY(__attribute__((__warn_unused_result__, __nonnull__, __leaf__)))
-int libstring_utf8verify(const char* string, enum libstring_utf8verify flags);
+int libstring_utf8verify(const char*, enum libstring_utf8verify);
 
+
+/**
+ * @param   string
+ * @param   delimiter
+ * @param   fields
+ * @param   fields_n
+ * @param   n
+ * @param   flags
+ */
 LIBSTRING_GCC_ONLY(__attribute__((__malloc__, __warn_unused_result__, __nonnull__(1, 2, 3))))
-char** libstring_cut(const char* string, const char* delimiter, const size_t* fields,
-		     size_t fields_n, size_t* n, enum libstring_cut flags);
+char** libstring_cut(const char*, const char*, const size_t*, size_t, size_t*, enum libstring_cut);
 
+
+/**
+ * @param   string
+ * @param   delimiter
+ * @param   fields...
+ * @param   n
+ * @param   flags
+ */
 LIBSTRING_GCC_ONLY(__attribute__((__malloc__, __warn_unused_result__, __nonnull__(1, 2), __sentinel__(2), __leaf__)))
-char** libstring_vcut(const char* string, const char* delimiter, size_t fields,
-		      ... /*, (char*)0, size_t* n, enum libstring_cut flags */);
+char** libstring_vcut(const char*, const char*, size_t, ... /*, (char*)0, size_t*, enum libstring_cut */);
 
+
+/**
+ * @param   string
+ * @param   start
+ * @param   end
+ * @param   flags
+ */
 LIBSTRING_GCC_ONLY(__attribute__((__malloc__, __warn_unused_result__, __nonnull__, __leaf__)))
-char* libstring_substring(const char* string, size_t start, size_t end, enum libstring_substring flags);
+char* libstring_substring(const char*, size_t, size_t, enum libstring_substring);
 
+
+/**
+ * @param   string
+ * @param   symbols
+ * @param   flags
+ */
 LIBSTRING_GCC_ONLY(__attribute__((__malloc__, __warn_unused_result__, __nonnull__(1), __leaf__)))
-char* libstring_trim(const char* string, const char* symbols, enum libstring_trim flags);
+char* libstring_trim(const char*, const char*, enum libstring_trim);
 
-LIBSTRING_GCC_ONLY(__attribute__((__malloc__, __warn_unused_result__, __nonnull__, __leaf__)))
-char* libstring_reverse(const char* string);
 
+/**
+ * @param   string
+ */
 LIBSTRING_GCC_ONLY(__attribute__((__malloc__, __warn_unused_result__, __nonnull__, __leaf__)))
-char* libstring_anagram(const char* string);
+char* libstring_reverse(const char*);
 
-LIBSTRING_GCC_ONLY(__attribute__((__malloc__, __warn_unused_result__, __nonnull__, __leaf__)))
-char* libstring_lcase(const char* string);
 
+/**
+ * @param   string
+ */
 LIBSTRING_GCC_ONLY(__attribute__((__malloc__, __warn_unused_result__, __nonnull__, __leaf__)))
-char* libstring_ucase(const char* string);
+char* libstring_anagram(const char*);
 
-LIBSTRING_GCC_ONLY(__attribute__((__malloc__, __warn_unused_result__, __nonnull__, __leaf__)))
-char* libstring_swapcase(const char* string);
 
+/**
+ * @param   string
+ */
 LIBSTRING_GCC_ONLY(__attribute__((__malloc__, __warn_unused_result__, __nonnull__, __leaf__)))
-char* libstring_expand(const char* string);
+char* libstring_lcase(const char*);
 
-LIBSTRING_GCC_ONLY(__attribute__((__malloc__, __warn_unused_result__, __nonnull__, __leaf__)))
-char* libstring_unexpand(const char* string);
 
+/**
+ * @param   string
+ */
 LIBSTRING_GCC_ONLY(__attribute__((__malloc__, __warn_unused_result__, __nonnull__, __leaf__)))
-char* libstring_rot13(const char* string);
+char* libstring_ucase(const char*);
 
+
+/**
+ * @param   string
+ */
 LIBSTRING_GCC_ONLY(__attribute__((__malloc__, __warn_unused_result__, __nonnull__, __leaf__)))
-char* libstring_double_rot13(const char* string);
+char* libstring_swapcase(const char*);
+
+
+/**
+ * @param   string
+ */
+LIBSTRING_GCC_ONLY(__attribute__((__malloc__, __warn_unused_result__, __nonnull__, __leaf__)))
+char* libstring_expand(const char*);
+
+
+/**
+ * @param   string
+ */
+LIBSTRING_GCC_ONLY(__attribute__((__malloc__, __warn_unused_result__, __nonnull__, __leaf__)))
+char* libstring_unexpand(const char*);
+
+
+/**
+ * @param   string
+ */
+LIBSTRING_GCC_ONLY(__attribute__((__malloc__, __warn_unused_result__, __nonnull__, __leaf__)))
+char* libstring_rot13(const char*);
+
+
+/**
+ * @param   string
+ */
+LIBSTRING_GCC_ONLY(__attribute__((__malloc__, __warn_unused_result__, __nonnull__, __leaf__)))
+char* libstring_double_rot13(const char*);
 
 
 
