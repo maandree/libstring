@@ -348,6 +348,8 @@ char* libstring_vcat(const char*, ... /*, (char*)0 */);
  * @return             A string with all strings in `strings`
  *                     concatenated in order, with the
  *                     delimiter `delimiter`. `NULL` on error.
+ * 
+ * @throws  ENOMEM  The process cannot enough memory.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_COMMON(1, 3))))
 char* libstring_join(const char* const*, const size_t*, const char*);
@@ -370,6 +372,8 @@ char* libstring_join(const char* const*, const size_t*, const char*);
  * @return              A string with all strings in `strings`
  *                      concatenated in order, with the
  *                      delimiter `delimiter`. `NULL` on error.
+ * 
+ * @throws  ENOMEM  The process cannot enough memory.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF, __sentinel__(1))))
 char* libstring_vjoin(const char*, ... /*, (char*)0, const char* */);
@@ -387,6 +391,8 @@ char* libstring_vjoin(const char*, ... /*, (char*)0, const char* */);
  * @return             `NULL`-terminated list of the substrings in
  *                     `string` which had `delimiter` between them.
  *                     `NULL` on error.
+ * 
+ * @throws  ENOMEM  The process cannot enough memory.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF(1, 2))))
 char** libstring_split(const char*, const char*, size_t*, enum libstring_split);
@@ -402,6 +408,8 @@ char** libstring_split(const char*, const char*, size_t*, enum libstring_split);
  * @param   flags   Additional options.
  * @return          `string` with `to` substituted for `from`.
  *                  `NULL` on error.
+ * 
+ * @throws  ENOMEM  The process cannot enough memory.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_replace(const char*, const char*, const char*, enum libstring_replace);
@@ -444,6 +452,8 @@ int libstring_utf8verify(const char*, enum libstring_utf8verify);
  * @param   flags      Additional options.
  * @return             `NULL`-terminated list of the
  *                     found fields. `NULL` on error.
+ * 
+ * @throws  ENOMEM  The process cannot enough memory.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_COMMON(1, 2, 3))))
 char** libstring_cut(const char*, const char*, const size_t*, size_t, size_t*, enum libstring_cut);
@@ -462,6 +472,8 @@ char** libstring_cut(const char*, const char*, const size_t*, size_t, size_t*, e
  * @param   flags      Additional options.
  * @return             `NULL`-terminated list of the
  *                     found fields. `NULL` on error.
+ * 
+ * @throws  ENOMEM  The process cannot enough memory.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF(1, 2))))
 char** libstring_vcut(const char*, const char*, size_t, ... /*, SIZE_MAX, size_t*, enum libstring_cut */);
@@ -479,6 +491,8 @@ char** libstring_vcut(const char*, const char*, size_t, ... /*, SIZE_MAX, size_t
  * @param   flags   Additional options.
  * @return          The selected substring of `string`.
  *                  `NULL` on error.
+ * 
+ * @throws  ENOMEM  The process cannot enough memory.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_substring(const char*, size_t, size_t, enum libstring_substring);
@@ -493,6 +507,8 @@ char* libstring_substring(const char*, size_t, size_t, enum libstring_substring)
  * @param   flags    Additional options.
  * @return           Trimmed version of `string`.
  *                   `NULL` on error.
+ * 
+ * @throws  ENOMEM  The process cannot enough memory.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF(1))))
 char* libstring_trim(const char*, const char*, enum libstring_trim);
@@ -505,6 +521,8 @@ char* libstring_trim(const char*, const char*, enum libstring_trim);
  * @param   string  The string to reverse.
  * @param   flags   Additional options.
  * @return          String reversed. `NULL` on error.
+ * 
+ * @throws  ENOMEM  The process cannot enough memory.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_reverse(const char*, enum libstring_reverse);
@@ -517,6 +535,8 @@ char* libstring_reverse(const char*, enum libstring_reverse);
  * @param   string  Anagram of the returned string.
  * @return          An anagram of `string`.
  *                  `NULL` on error.
+ * 
+ * @throws  ENOMEM  The process cannot enough memory.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_anagram(const char*);
@@ -529,6 +549,8 @@ char* libstring_anagram(const char*);
  * @param   string  The string to manipulate.
  * @return          Lowercase version of `string`.
  *                  `NULL` on error.
+ * 
+ * @throws  ENOMEM  The process cannot enough memory.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_lcase(const char*);
@@ -541,6 +563,8 @@ char* libstring_lcase(const char*);
  * @param   string  The string to manipulate.
  * @return          Uppercase version of `string`.
  *                  `NULL` on error.
+ * 
+ * @throws  ENOMEM  The process cannot enough memory.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_ucase(const char*);
@@ -553,6 +577,8 @@ char* libstring_ucase(const char*);
  * @param   string  The string to manipulate.
  * @return          Capitalised version of `string`.
  *                  `NULL` on error.
+ * 
+ * @throws  ENOMEM  The process cannot enough memory.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_capitalise(const char*);
@@ -565,6 +591,8 @@ char* libstring_capitalise(const char*);
  * @param   string  The string to manipulate.
  * @return          `string` with swapped cased for
  *                  all letters. `NULL` on error.
+ * 
+ * @throws  ENOMEM  The process cannot enough memory.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_swapcase(const char*);
@@ -578,6 +606,8 @@ char* libstring_swapcase(const char*);
  * @param   flags   Additional options.
  * @return          `string` with 8 spaces substituted
  *                  tabs for tab space. `NULL` on error.
+ * 
+ * @throws  ENOMEM  The process cannot enough memory.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_expand(const char*, enum libstring_expand);
@@ -591,6 +621,8 @@ char* libstring_expand(const char*, enum libstring_expand);
  * @return          `string` with initial spaces of
  *                  groups of 8, replaced with tab
  *                  spaces. `NULL` on error.
+ * 
+ * @throws  ENOMEM  The process cannot enough memory.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_unexpand(const char*);
@@ -615,6 +647,8 @@ char* libstring_unexpand(const char*);
  *                  letter in the alphabet whose position
  *                  is offset from that letter by 13.
  *                  `NULL` on error.
+ * 
+ * @throws  ENOMEM  The process cannot enough memory.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_rot13(const char*);
@@ -633,6 +667,8 @@ char* libstring_rot13(const char*);
  * 
  * @param   string  The string to copy.
  * @return          A copy of `string`. `NULL` on error.
+ * 
+ * @throws  ENOMEM  The process cannot enough memory.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_double_rot13(const char*);
