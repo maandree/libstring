@@ -223,174 +223,194 @@ enum libstring_trim
 
 
 /**
- * @param   strings
- * @param   n
+ * @param   strings  List of strings to concatenate, must
+ *                   not be `NULL` or contain `NULL`:s.
+ * @param   n        Either a pointer the number of strings
+ *                   stored in `strings`, or `NULL` if
+ *                   `strings` is `NULL`-terminated.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_COMMON(1))))
 char* libstring_cat(const char* const*, const size_t*);
 
 
 /**
- * @param   strings...
+ * @param   strings...  List of strings to concatenate, end
+ *                      with a `NULL`.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF, __sentinel__(0))))
 char* libstring_vcat(const char*, ... /*, (char*)0 */);
 
 
 /**
- * @param   strings
- * @param   n
- * @param   delimiter
+ * @param   strings    List of strings to join, must
+ *                     not be `NULL` or contain `NULL`:s.
+ * @param   n          Either a pointer the number of strings
+ *                     stored in `strings`, or `NULL` if
+ *                     `strings` is `NULL`-terminated.
+ * @param   delimiter  A string to insert between all strings.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_COMMON(1, 3))))
 char* libstring_join(const char* const*, const size_t*, const char*);
 
 
 /**
- * @param   strings...
- * @param   delimiter
+ * @param   strings...  List of strings to concatenate, end
+ *                      with a `NULL`.
+ * @param   delimiter   A string to insert between all strings.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF, __sentinel__(1))))
 char* libstring_vjoin(const char*, ... /*, (char*)0, const char* */);
 
 
 /**
- * @param   delimiter
- * @param   string
- * @param   n
- * @param   flags
+ * @param   string     String to split.
+ * @param   delimiter  The delimiter.
+ * @param   n          Output parameter for the number of
+ *                     strings in the returned list. May be `NULL`.
+ * @param   flags      Additional options.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF(1, 2))))
 char** libstring_split(const char*, const char*, size_t*, enum libstring_split);
 
 
 /**
- * @param   string
- * @param   from
- * @param   to
- * @param   flags
+ * @param   string  The string to manipulate.
+ * @param   from    Substring to replace.
+ * @param   to      String to substitute for `from`.
+ * @param   flags   Additional options.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_replace(const char*, const char*, const char*, enum libstring_replace);
 
 
 /**
- * @param   string
- * @param   length
- * @param   flags
+ * @param   string  The string to measure.
+ * @param   flags   Additional options.
  */
 LIBSTRING_GCC_ONLY(__attribute__((__warn_unused_result__, __nonnull__, __leaf__)))
-size_t libstring_length(const char*, size_t*, enum libstring_length);
+size_t libstring_length(const char*, enum libstring_length);
 
 
 /**
- * @param   string
- * @param   flags
+ * @param   string  The string to validate.
+ * @param   flags   Additional options.
  */
 LIBSTRING_GCC_ONLY(__attribute__((__warn_unused_result__, __nonnull__, __leaf__)))
 int libstring_utf8verify(const char*, enum libstring_utf8verify);
 
 
 /**
- * @param   string
- * @param   delimiter
- * @param   fields
- * @param   fields_n
- * @param   n
- * @param   flags
+ * @param   string     The string to cut.
+ * @param   delimiter  The delimiter.
+ * @param   fields     List of fields to return.
+ * @param   fields_n   The number of elements in `fields`.
+ * @param   n          Output parameter for the number of
+ *                     returned fields. May be `NULL`.
+ * @param   flags      Additional options.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_COMMON(1, 2, 3))))
 char** libstring_cut(const char*, const char*, const size_t*, size_t, size_t*, enum libstring_cut);
 
 
 /**
- * @param   string
- * @param   delimiter
- * @param   fields...
- * @param   n
- * @param   flags
+ * @param   string     The string to cut.
+ * @param   delimiter  The delimiter.
+ * @param   fields...  List of fields to return.
+ *                     End with `SIZE_MAX`.
+ * @param   n          Output parameter for the number of
+ *                     returned fields. May be `NULL`.
+ * @param   flags      Additional options.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF(1, 2))))
 char** libstring_vcut(const char*, const char*, size_t, ... /*, SIZE_MAX, size_t*, enum libstring_cut */);
 
 
 /**
- * @param   string
- * @param   start
- * @param   end
- * @param   flags
+ * @param   string  The string.
+ * @param   start   The position in `string` of the
+ *                  beginning of the substring.
+ * @param   end     The position in `string` of the
+ *                  end of the substring.
+ * @param   flags   Additional options.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_substring(const char*, size_t, size_t, enum libstring_substring);
 
 
 /**
- * @param   string
- * @param   symbols
- * @param   flags
+ * @param   string   The string to manipulate.
+ * @param   symbols  Symbols to remove.
+ * @param   flags    Additional options.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF(1))))
 char* libstring_trim(const char*, const char*, enum libstring_trim);
 
 
 /**
- * @param   string
+ * @param   string  The string to reverse.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_reverse(const char*);
 
 
 /**
- * @param   string
+ * @param   string  Anagram of the returned string.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_anagram(const char*);
 
 
 /**
- * @param   string
+ * @param   string  The string to manipulate.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_lcase(const char*);
 
 
 /**
- * @param   string
+ * @param   string  The string to manipulate.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_ucase(const char*);
 
 
 /**
- * @param   string
+ * @param   string  The string to manipulate.
+ */
+LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
+char* libstring_capitalise(const char*);
+
+
+/**
+ * @param   string  The string to manipulate.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_swapcase(const char*);
 
 
 /**
- * @param   string
+ * @param   string  The string to manipulate.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_expand(const char*);
 
 
 /**
- * @param   string
+ * @param   string  The string to manipulate.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_unexpand(const char*);
 
 
 /**
- * @param   string
+ * @param   string  The string to manipulate.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_rot13(const char*);
 
 
 /**
- * @param   string
+ * @param   string  The string to copy.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_double_rot13(const char*);
