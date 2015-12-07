@@ -271,6 +271,21 @@ enum libstring_expand
 
 
 /**
+ * Concatenate strings.
+ * 
+ * Example:
+ *   const char* strings[] = {"alpha", "bet", "s", NULL};
+ *   s = libstring_cat(strings, NULL);
+ *   # s is "alphabets"
+ *   free(s);
+ * 
+ * Example:
+ *   const char* strings[] = {"alpha", "bet", "s"};
+ *   size_t n = 3;
+ *   s = libstring_cat(strings, &n);
+ *   # s is "alphabets"
+ *   free(s);
+ * 
  * @param   strings  List of strings to concatenate, must
  *                   not be `NULL` or contain `NULL`:s.
  * @param   n        Either a pointer the number of strings
@@ -288,6 +303,13 @@ char* libstring_cat(const char* const*, const size_t*);
 
 
 /**
+ * Concatenate strings.
+ * 
+ * Example:
+ *   s = libstring_vcat("alpha", "bet", "s", NULL);
+ *   # s is "alphabets"
+ *   free(s);
+ * 
  * @param   strings...  List of strings to concatenate, end
  *                      with a `NULL`.
  * @return              A string with all strings in `strings`
@@ -302,6 +324,21 @@ char* libstring_vcat(const char*, ... /*, (char*)0 */);
 
 
 /**
+ * Concatenate strings and insert a delimiter between the strings.
+ * 
+ * Example:
+ *   const char* strings[] = {"alpha", "bet", "s", NULL};
+ *   s = libstring_join(strings, NULL, "--");
+ *   # s is "alpha--bet--s"
+ *   free(s);
+ * 
+ * Example:
+ *   const char* strings[] = {"alpha", "bet", "s"};
+ *   size_t n = 3;
+ *   s = libstring_join(strings, &n, "--");
+ *   # s is "alpha--bet--s"
+ *   free(s);
+ * 
  * @param   strings    List of strings to join, must
  *                     not be `NULL` or contain `NULL`:s.
  * @param   n          Either a pointer the number of strings
@@ -320,6 +357,13 @@ char* libstring_join(const char* const*, const size_t*, const char*);
 
 
 /**
+ * Concatenate strings and insert a delimiter between the strings.
+ * 
+ * Example:
+ *   s = libstring_vjoin("alpha", "bet", "s", NULL, "--");
+ *   # s is "alpha--bet--s"
+ *   free(s);
+ * 
  * @param   strings...  List of strings to concatenate, end
  *                      with a `NULL`.
  * @param   delimiter   A string to insert between all strings.
@@ -536,8 +580,7 @@ char* libstring_expand(const char*, enum libstring_expand);
 /**
  * @param   string  The string to manipulate.
  * @return          `string` with initial spaces of
- *                  groups of 8, replaced with tab
- *                  spaces.
+ *                  groups of 8, replaced with tab spaces.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_unexpand(const char*);
@@ -547,6 +590,15 @@ char* libstring_unexpand(const char*);
 
 
 /**
+ * ROT13: Offensive joke and spoiler masker.
+ * 
+ * Example:
+ *   s = libstring_rot13("An offensive joke");
+ *   # s is "Na bssrafvir wbxr"
+ *   z = libstring_rot13(s);
+ *   # z is "An offensive joke"
+ *   free(s), free(z);
+ * 
  * @param   string  The string to manipulate.
  * @return          `string` with all ASCII letters
  *                  substituted for the corresponding
@@ -561,6 +613,13 @@ char* libstring_rot13(const char*);
 
 
 /**
+ * Double ROT13: terrorist-grade encryption.
+ * 
+ * Example:
+ *   s = libstring_rot13("Secret message");
+ *   # s is "Secret message"
+ *   free(s);
+ * 
  * @param   string  The string to copy.
  * @return          A copy of `string`.
  */
