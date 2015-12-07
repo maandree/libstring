@@ -293,7 +293,7 @@ enum libstring_expand
  *                   `strings` is `NULL`-terminated.
  * @return           A string with all strings in `strings`
  *                   concatenated in order, without any
- *                   delimiter.
+ *                   delimiter. `NULL` on error.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_COMMON(1))))
 char* libstring_cat(const char* const*, const size_t*);
@@ -314,7 +314,7 @@ char* libstring_cat(const char* const*, const size_t*);
  *                      with a `NULL`.
  * @return              A string with all strings in `strings`
  *                      concatenated in order, without any
- *                      delimiter.
+ *                      delimiter. `NULL` on error.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF, __sentinel__(0))))
 char* libstring_vcat(const char*, ... /*, (char*)0 */);
@@ -347,7 +347,7 @@ char* libstring_vcat(const char*, ... /*, (char*)0 */);
  * @param   delimiter  A string to insert between all strings.
  * @return             A string with all strings in `strings`
  *                     concatenated in order, with the
- *                     delimiter `delimiter`.
+ *                     delimiter `delimiter`. `NULL` on error.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_COMMON(1, 3))))
 char* libstring_join(const char* const*, const size_t*, const char*);
@@ -369,7 +369,7 @@ char* libstring_join(const char* const*, const size_t*, const char*);
  * @param   delimiter   A string to insert between all strings.
  * @return              A string with all strings in `strings`
  *                      concatenated in order, with the
- *                      delimiter `delimiter`.
+ *                      delimiter `delimiter`. `NULL` on error.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF, __sentinel__(1))))
 char* libstring_vjoin(const char*, ... /*, (char*)0, const char* */);
@@ -386,6 +386,7 @@ char* libstring_vjoin(const char*, ... /*, (char*)0, const char* */);
  * @param   flags      Additional options.
  * @return             `NULL`-terminated list of the substrings in
  *                     `string` which had `delimiter` between them.
+ *                     `NULL` on error.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF(1, 2))))
 char** libstring_split(const char*, const char*, size_t*, enum libstring_split);
@@ -400,6 +401,7 @@ char** libstring_split(const char*, const char*, size_t*, enum libstring_split);
  * @param   to      String to substitute for `from`.
  * @param   flags   Additional options.
  * @return          `string` with `to` substituted for `from`.
+ *                  `NULL` on error.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_replace(const char*, const char*, const char*, enum libstring_replace);
@@ -441,7 +443,7 @@ int libstring_utf8verify(const char*, enum libstring_utf8verify);
  *                     returned fields. May be `NULL`.
  * @param   flags      Additional options.
  * @return             `NULL`-terminated list of the
- *                     found fields.
+ *                     found fields. `NULL` on error.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_COMMON(1, 2, 3))))
 char** libstring_cut(const char*, const char*, const size_t*, size_t, size_t*, enum libstring_cut);
@@ -459,7 +461,7 @@ char** libstring_cut(const char*, const char*, const size_t*, size_t, size_t*, e
  *                     returned fields. May be `NULL`.
  * @param   flags      Additional options.
  * @return             `NULL`-terminated list of the
- *                     found fields.
+ *                     found fields. `NULL` on error.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF(1, 2))))
 char** libstring_vcut(const char*, const char*, size_t, ... /*, SIZE_MAX, size_t*, enum libstring_cut */);
@@ -476,6 +478,7 @@ char** libstring_vcut(const char*, const char*, size_t, ... /*, SIZE_MAX, size_t
  *                  end of the substring.
  * @param   flags   Additional options.
  * @return          The selected substring of `string`.
+ *                  `NULL` on error.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_substring(const char*, size_t, size_t, enum libstring_substring);
@@ -489,6 +492,7 @@ char* libstring_substring(const char*, size_t, size_t, enum libstring_substring)
  * @param   symbols  Symbols to remove.
  * @param   flags    Additional options.
  * @return           Trimmed version of `string`.
+ *                   `NULL` on error.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF(1))))
 char* libstring_trim(const char*, const char*, enum libstring_trim);
@@ -500,7 +504,7 @@ char* libstring_trim(const char*, const char*, enum libstring_trim);
 /**
  * @param   string  The string to reverse.
  * @param   flags   Additional options.
- * @return          String reversed.
+ * @return          String reversed. `NULL` on error.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_reverse(const char*, enum libstring_reverse);
@@ -512,6 +516,7 @@ char* libstring_reverse(const char*, enum libstring_reverse);
 /**
  * @param   string  Anagram of the returned string.
  * @return          An anagram of `string`.
+ *                  `NULL` on error.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_anagram(const char*);
@@ -523,6 +528,7 @@ char* libstring_anagram(const char*);
 /**
  * @param   string  The string to manipulate.
  * @return          Lowercase version of `string`.
+ *                  `NULL` on error.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_lcase(const char*);
@@ -534,6 +540,7 @@ char* libstring_lcase(const char*);
 /**
  * @param   string  The string to manipulate.
  * @return          Uppercase version of `string`.
+ *                  `NULL` on error.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_ucase(const char*);
@@ -545,6 +552,7 @@ char* libstring_ucase(const char*);
 /**
  * @param   string  The string to manipulate.
  * @return          Capitalised version of `string`.
+ *                  `NULL` on error.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_capitalise(const char*);
@@ -555,7 +563,8 @@ char* libstring_capitalise(const char*);
 
 /**
  * @param   string  The string to manipulate.
- * @return          `string` with swapped cased for all letters.
+ * @return          `string` with swapped cased for
+ *                  all letters. `NULL` on error.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_swapcase(const char*);
@@ -568,7 +577,7 @@ char* libstring_swapcase(const char*);
  * @param   string  The string to manipulate.
  * @param   flags   Additional options.
  * @return          `string` with 8 spaces substituted
- *                  tabs for tab space.
+ *                  tabs for tab space. `NULL` on error.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_expand(const char*, enum libstring_expand);
@@ -580,7 +589,8 @@ char* libstring_expand(const char*, enum libstring_expand);
 /**
  * @param   string  The string to manipulate.
  * @return          `string` with initial spaces of
- *                  groups of 8, replaced with tab spaces.
+ *                  groups of 8, replaced with tab
+ *                  spaces. `NULL` on error.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_unexpand(const char*);
@@ -604,6 +614,7 @@ char* libstring_unexpand(const char*);
  *                  substituted for the corresponding
  *                  letter in the alphabet whose position
  *                  is offset from that letter by 13.
+ *                  `NULL` on error.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_rot13(const char*);
@@ -621,7 +632,7 @@ char* libstring_rot13(const char*);
  *   free(s);
  * 
  * @param   string  The string to copy.
- * @return          A copy of `string`.
+ * @return          A copy of `string`. `NULL` on error.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_double_rot13(const char*);
