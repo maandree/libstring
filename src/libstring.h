@@ -282,6 +282,9 @@ enum libstring_expand
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_COMMON(1))))
 char* libstring_cat(const char* const*, const size_t*);
+#ifdef LIBSTRING_SHORT_NAMES
+# define strmulcat  libstring_cat
+#endif
 
 
 /**
@@ -293,6 +296,9 @@ char* libstring_cat(const char* const*, const size_t*);
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF, __sentinel__(0))))
 char* libstring_vcat(const char*, ... /*, (char*)0 */);
+#ifdef LIBSTRING_SHORT_NAMES
+# define vstrmulcat  libstring_vcat
+#endif
 
 
 /**
@@ -308,6 +314,9 @@ char* libstring_vcat(const char*, ... /*, (char*)0 */);
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_COMMON(1, 3))))
 char* libstring_join(const char* const*, const size_t*, const char*);
+#ifdef LIBSTRING_SHORT_NAMES
+# define strjoin  libstring_join
+#endif
 
 
 /**
@@ -320,6 +329,9 @@ char* libstring_join(const char* const*, const size_t*, const char*);
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF, __sentinel__(1))))
 char* libstring_vjoin(const char*, ... /*, (char*)0, const char* */);
+#ifdef LIBSTRING_SHORT_NAMES
+# define vstrjoin  libstring_vjoin
+#endif
 
 
 /**
@@ -333,6 +345,9 @@ char* libstring_vjoin(const char*, ... /*, (char*)0, const char* */);
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF(1, 2))))
 char** libstring_split(const char*, const char*, size_t*, enum libstring_split);
+#ifdef LIBSTRING_SHORT_NAMES
+# define strsplit  libstring_split
+#endif
 
 
 /**
@@ -344,6 +359,9 @@ char** libstring_split(const char*, const char*, size_t*, enum libstring_split);
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_replace(const char*, const char*, const char*, enum libstring_replace);
+#ifdef LIBSTRING_SHORT_NAMES
+# define strreplace  libstring_replace
+#endif
 
 
 /**
@@ -353,6 +371,9 @@ char* libstring_replace(const char*, const char*, const char*, enum libstring_re
  */
 LIBSTRING_GCC_ONLY(__attribute__((__warn_unused_result__, __nonnull__, __leaf__)))
 size_t libstring_length(const char*, enum libstring_length);
+#ifdef LIBSTRING_SHORT_NAMES
+# define strdisplen  libstring_length
+#endif
 
 
 /**
@@ -362,6 +383,9 @@ size_t libstring_length(const char*, enum libstring_length);
  */
 LIBSTRING_GCC_ONLY(__attribute__((__warn_unused_result__, __nonnull__, __leaf__)))
 int libstring_utf8verify(const char*, enum libstring_utf8verify);
+#ifdef LIBSTRING_SHORT_NAMES
+# define strverify  libstring_utf8verify
+#endif
 
 
 /**
@@ -377,6 +401,9 @@ int libstring_utf8verify(const char*, enum libstring_utf8verify);
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_COMMON(1, 2, 3))))
 char** libstring_cut(const char*, const char*, const size_t*, size_t, size_t*, enum libstring_cut);
+#ifdef LIBSTRING_SHORT_NAMES
+# define strcut  libstring_cut
+#endif
 
 
 /**
@@ -392,6 +419,9 @@ char** libstring_cut(const char*, const char*, const size_t*, size_t, size_t*, e
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF(1, 2))))
 char** libstring_vcut(const char*, const char*, size_t, ... /*, SIZE_MAX, size_t*, enum libstring_cut */);
+#ifdef LIBSTRING_SHORT_NAMES
+# define vstrcut  libstring_vcut
+#endif
 
 
 /**
@@ -405,6 +435,9 @@ char** libstring_vcut(const char*, const char*, size_t, ... /*, SIZE_MAX, size_t
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_substring(const char*, size_t, size_t, enum libstring_substring);
+#ifdef LIBSTRING_SHORT_NAMES
+# define strsub  libstring_substring
+#endif
 
 
 /**
@@ -415,6 +448,9 @@ char* libstring_substring(const char*, size_t, size_t, enum libstring_substring)
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF(1))))
 char* libstring_trim(const char*, const char*, enum libstring_trim);
+#ifdef LIBSTRING_SHORT_NAMES
+# define strtrim  libstring_trim
+#endif
 
 
 /**
@@ -424,6 +460,9 @@ char* libstring_trim(const char*, const char*, enum libstring_trim);
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_reverse(const char*, enum libstring_reverse);
+#ifdef LIBSTRING_SHORT_NAMES
+# define strrev  libstring_reverse
+#endif
 
 
 /**
@@ -432,6 +471,9 @@ char* libstring_reverse(const char*, enum libstring_reverse);
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_anagram(const char*);
+#ifdef LIBSTRING_SHORT_NAMES
+# define stranagram  libstring_anagram
+#endif
 
 
 /**
@@ -440,6 +482,9 @@ char* libstring_anagram(const char*);
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_lcase(const char*);
+#ifdef LIBSTRING_SHORT_NAMES
+# define strlcase  libstring_lcase
+#endif
 
 
 /**
@@ -448,6 +493,9 @@ char* libstring_lcase(const char*);
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_ucase(const char*);
+#ifdef LIBSTRING_SHORT_NAMES
+# define strucase  libstring_ucase
+#endif
 
 
 /**
@@ -456,6 +504,9 @@ char* libstring_ucase(const char*);
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_capitalise(const char*);
+#ifdef LIBSTRING_SHORT_NAMES
+# define strcap  libstring_capitalise
+#endif
 
 
 /**
@@ -464,6 +515,9 @@ char* libstring_capitalise(const char*);
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_swapcase(const char*);
+#ifdef LIBSTRING_SHORT_NAMES
+# define strscase  libstring_swapcase
+#endif
 
 
 /**
@@ -474,6 +528,9 @@ char* libstring_swapcase(const char*);
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_expand(const char*, enum libstring_expand);
+#ifdef LIBSTRING_SHORT_NAMES
+# define strexp  libstring_expand
+#endif
 
 
 /**
@@ -484,6 +541,9 @@ char* libstring_expand(const char*, enum libstring_expand);
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_unexpand(const char*);
+#ifdef LIBSTRING_SHORT_NAMES
+# define strunexp  libstring_unexpand
+#endif
 
 
 /**
@@ -495,6 +555,9 @@ char* libstring_unexpand(const char*);
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_rot13(const char*);
+#ifdef LIBSTRING_SHORT_NAMES
+# define strrot13  libstring_rot13
+#endif
 
 
 /**
@@ -503,6 +566,9 @@ char* libstring_rot13(const char*);
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_double_rot13(const char*);
+#ifdef LIBSTRING_SHORT_NAMES
+# define str2rot13  libstring_double_rot13
+#endif
 
 
 
