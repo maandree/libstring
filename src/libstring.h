@@ -221,6 +221,54 @@ enum libstring_trim
 };
 
 
+/**
+ * Flags for `libstring_reverse`.
+ */
+enum libstring_reverse
+{
+  /**
+   * Treat combining diacritical marks
+   * as part of the letters it is on.
+   */
+  LIBSTRING_REVERSE_KEEP_COMBINING = 1,
+};
+
+
+enum libstring_expand
+{
+  /**
+   * Do not count combining diacritical
+   * marks as contributing to the length
+   * of the string.
+   */
+  LIBSTRING_EXPAND_IGNORE_COMBINING = 1,
+  
+  /**
+   * Guess how many columns will be used
+   * when displayed in a terminal. Unless
+   * `LIBSTRING_LENGTH_IGNORE_COMBINING`
+   * is also used, combining diacritical
+   * marks ware assumed to not combine.
+   */
+  LIBSTRING_EXPAND_DISPLAY_LENGTH = 2,
+  
+  /**
+   * Do not count backspaces as
+   * contributing negatively to the length
+   * of the string.
+   */
+  LIBSTRING_EXPAND_IGNORE_BACKSPACE = 4,
+  
+  /**
+   * Only expand beginning of the line,
+   * stop at any other character space
+   * and tab space. This implies
+   * `LIBSTRING_EXPAND_IGNORE_BACKSPACE`.
+   */
+  LIBSTRING_EXPAND_INITIAL_ONLY = 8,
+};
+
+
 
 /**
  * @param   strings  List of strings to concatenate, must
@@ -228,6 +276,9 @@ enum libstring_trim
  * @param   n        Either a pointer the number of strings
  *                   stored in `strings`, or `NULL` if
  *                   `strings` is `NULL`-terminated.
+ * @return           A string with all strings in `strings`
+ *                   concatenated in order, without any
+ *                   delimiter.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_COMMON(1))))
 char* libstring_cat(const char* const*, const size_t*);
@@ -236,6 +287,9 @@ char* libstring_cat(const char* const*, const size_t*);
 /**
  * @param   strings...  List of strings to concatenate, end
  *                      with a `NULL`.
+ * @return              A string with all strings in `strings`
+ *                      concatenated in order, without any
+ *                      delimiter.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF, __sentinel__(0))))
 char* libstring_vcat(const char*, ... /*, (char*)0 */);
@@ -248,6 +302,9 @@ char* libstring_vcat(const char*, ... /*, (char*)0 */);
  *                     stored in `strings`, or `NULL` if
  *                     `strings` is `NULL`-terminated.
  * @param   delimiter  A string to insert between all strings.
+ * @return             A string with all strings in `strings`
+ *                     concatenated in order, with the
+ *                     delimiter `delimiter`.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_COMMON(1, 3))))
 char* libstring_join(const char* const*, const size_t*, const char*);
@@ -257,6 +314,9 @@ char* libstring_join(const char* const*, const size_t*, const char*);
  * @param   strings...  List of strings to concatenate, end
  *                      with a `NULL`.
  * @param   delimiter   A string to insert between all strings.
+ * @return              A string with all strings in `strings`
+ *                      concatenated in order, with the
+ *                      delimiter `delimiter`.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF, __sentinel__(1))))
 char* libstring_vjoin(const char*, ... /*, (char*)0, const char* */);
@@ -268,6 +328,8 @@ char* libstring_vjoin(const char*, ... /*, (char*)0, const char* */);
  * @param   n          Output parameter for the number of
  *                     strings in the returned list. May be `NULL`.
  * @param   flags      Additional options.
+ * @return             `NULL`-terminated list of the substrings in
+ *                     `string` which had `delimiter` between them.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF(1, 2))))
 char** libstring_split(const char*, const char*, size_t*, enum libstring_split);
@@ -278,6 +340,7 @@ char** libstring_split(const char*, const char*, size_t*, enum libstring_split);
  * @param   from    Substring to replace.
  * @param   to      String to substitute for `from`.
  * @param   flags   Additional options.
+ * @return          `string` with `to` substituted for `from`.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_replace(const char*, const char*, const char*, enum libstring_replace);
@@ -286,6 +349,7 @@ char* libstring_replace(const char*, const char*, const char*, enum libstring_re
 /**
  * @param   string  The string to measure.
  * @param   flags   Additional options.
+ * @return          The length of `string`.
  */
 LIBSTRING_GCC_ONLY(__attribute__((__warn_unused_result__, __nonnull__, __leaf__)))
 size_t libstring_length(const char*, enum libstring_length);
@@ -294,6 +358,7 @@ size_t libstring_length(const char*, enum libstring_length);
 /**
  * @param   string  The string to validate.
  * @param   flags   Additional options.
+ * @return          0 if the string is valid, -1 otherwise.
  */
 LIBSTRING_GCC_ONLY(__attribute__((__warn_unused_result__, __nonnull__, __leaf__)))
 int libstring_utf8verify(const char*, enum libstring_utf8verify);
@@ -307,6 +372,8 @@ int libstring_utf8verify(const char*, enum libstring_utf8verify);
  * @param   n          Output parameter for the number of
  *                     returned fields. May be `NULL`.
  * @param   flags      Additional options.
+ * @return             `NULL`-terminated list of the
+ *                     found fields.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_COMMON(1, 2, 3))))
 char** libstring_cut(const char*, const char*, const size_t*, size_t, size_t*, enum libstring_cut);
@@ -320,6 +387,8 @@ char** libstring_cut(const char*, const char*, const size_t*, size_t, size_t*, e
  * @param   n          Output parameter for the number of
  *                     returned fields. May be `NULL`.
  * @param   flags      Additional options.
+ * @return             `NULL`-terminated list of the
+ *                     found fields.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF(1, 2))))
 char** libstring_vcut(const char*, const char*, size_t, ... /*, SIZE_MAX, size_t*, enum libstring_cut */);
@@ -332,6 +401,7 @@ char** libstring_vcut(const char*, const char*, size_t, ... /*, SIZE_MAX, size_t
  * @param   end     The position in `string` of the
  *                  end of the substring.
  * @param   flags   Additional options.
+ * @return          The selected substring of `string`.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_substring(const char*, size_t, size_t, enum libstring_substring);
@@ -341,6 +411,7 @@ char* libstring_substring(const char*, size_t, size_t, enum libstring_substring)
  * @param   string   The string to manipulate.
  * @param   symbols  Symbols to remove.
  * @param   flags    Additional options.
+ * @return           Trimmed version of `string`.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF(1))))
 char* libstring_trim(const char*, const char*, enum libstring_trim);
@@ -348,13 +419,16 @@ char* libstring_trim(const char*, const char*, enum libstring_trim);
 
 /**
  * @param   string  The string to reverse.
+ * @param   flags   Additional options.
+ * @return          String reversed.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
-char* libstring_reverse(const char*);
+char* libstring_reverse(const char*, enum libstring_reverse);
 
 
 /**
  * @param   string  Anagram of the returned string.
+ * @return          An anagram of `string`.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_anagram(const char*);
@@ -362,6 +436,7 @@ char* libstring_anagram(const char*);
 
 /**
  * @param   string  The string to manipulate.
+ * @return          Lowercase version of `string`.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_lcase(const char*);
@@ -369,6 +444,7 @@ char* libstring_lcase(const char*);
 
 /**
  * @param   string  The string to manipulate.
+ * @return          Uppercase version of `string`.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_ucase(const char*);
@@ -376,6 +452,7 @@ char* libstring_ucase(const char*);
 
 /**
  * @param   string  The string to manipulate.
+ * @return          Capitalised version of `string`.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_capitalise(const char*);
@@ -383,6 +460,7 @@ char* libstring_capitalise(const char*);
 
 /**
  * @param   string  The string to manipulate.
+ * @return          `string` with swapped cased for all letters.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_swapcase(const char*);
@@ -390,13 +468,19 @@ char* libstring_swapcase(const char*);
 
 /**
  * @param   string  The string to manipulate.
+ * @param   flags   Additional options.
+ * @return          `string` with 8 spaces substituted
+ *                  tabs for tab space.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
-char* libstring_expand(const char*);
+char* libstring_expand(const char*, enum libstring_expand);
 
 
 /**
  * @param   string  The string to manipulate.
+ * @return          `string` with initial spaces of
+ *                  groups of 8, replaced with tab
+ *                  spaces.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_unexpand(const char*);
@@ -404,6 +488,10 @@ char* libstring_unexpand(const char*);
 
 /**
  * @param   string  The string to manipulate.
+ * @return          `string` with all ASCII letters
+ *                  substituted for the corresponding
+ *                  letter in the alphabet whose position
+ *                  is offset from that letter by 13.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_rot13(const char*);
@@ -411,6 +499,7 @@ char* libstring_rot13(const char*);
 
 /**
  * @param   string  The string to copy.
+ * @return          A copy of `string`.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
 char* libstring_double_rot13(const char*);
