@@ -419,6 +419,26 @@ char* libstring_replace(const char*, const char*, const char*, enum libstring_re
 
 
 /**
+ * `r = libstring_shellsafe(s)` is equivalent to
+ * `t = libstring_replace(s, "'", "'\''", 0);
+ *  if ((r = malloc(strlen(t) + 3)))
+ *    *r = '\'', strcpy(stpcpy(r + 1, t), "'");
+ *  r;`.
+ * You guess what it does, and why.
+ * 
+ * @param   string  The string to manipulate.
+ * @return          The result. `NULL` on error.
+ * 
+ * @throws  ENOMEM  The process cannot enough memory.
+ */
+LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
+char* libstring_shellsafe(const char*);
+#ifdef LIBSTRING_SHORT_NAMES
+# define strshsafe  libstring_shellsafe
+#endif
+
+
+/**
  * @param   string  The string to measure.
  * @param   flags   Additional options.
  * @return          The length of `string`.
