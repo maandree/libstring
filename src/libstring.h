@@ -383,6 +383,8 @@ char* libstring_vjoin(const char*, ... /*, (char*)0, const char* */);
 
 
 /**
+ * TODO
+ * 
  * @param   string     String to split.
  * @param   delimiter  The delimiter.
  * @param   n          Output parameter for the number of
@@ -402,6 +404,8 @@ char** libstring_split(const char*, const char*, size_t*, enum libstring_split);
 
 
 /**
+ * TODO
+ * 
  * @param   string  The string to manipulate.
  * @param   from    Substring to replace.
  * @param   to      String to substitute for `from`.
@@ -439,6 +443,8 @@ char* libstring_shellsafe(const char*);
 
 
 /**
+ * Measure the length of a string.
+ * 
  * @param   string  The string to measure.
  * @param   flags   Additional options.
  * @return          The length of `string`.
@@ -451,6 +457,8 @@ size_t libstring_length(const char*, enum libstring_length);
 
 
 /**
+ * Validate teh encoding of a string.
+ * 
  * @param   string  The string to validate.
  * @param   flags   Additional options.
  * @return          0 if the string is valid, -1 otherwise.
@@ -463,6 +471,8 @@ int libstring_utf8verify(const char*, enum libstring_utf8verify);
 
 
 /**
+ * TODO
+ * 
  * @param   string     The string to cut.
  * @param   delimiter  The delimiter.
  * @param   fields     List of fields to return.
@@ -483,6 +493,8 @@ char** libstring_cut(const char*, const char*, const size_t*, size_t, size_t*, e
 
 
 /**
+ * TODO
+ * 
  * @param   string     The string to cut.
  * @param   delimiter  The delimiter.
  * @param   fields...  List of fields to return.
@@ -503,6 +515,8 @@ char** libstring_vcut(const char*, const char*, size_t, ... /*, SIZE_MAX, size_t
 
 
 /**
+ * Retrieve a substring.
+ * 
  * @param   string  The string.
  * @param   start   The position in `string` of the
  *                  beginning of the substring.
@@ -522,6 +536,13 @@ char* libstring_substring(const char*, size_t, size_t, enum libstring_substring)
 
 
 /**
+ * Remove unnecessary whitespace in string.
+ * 
+ * Example:
+ *   s = libstring_trim("  hello   world!  ", NULL, 0);
+ *   # s is "hello   world!"
+ *   free(s);
+ * 
  * @param   string   The string to manipulate.
  * @param   symbols  Symbols to remove.
  * @param   flags    Additional options.
@@ -538,6 +559,13 @@ char* libstring_trim(const char*, const char*, enum libstring_trim);
 
 
 /**
+ * Reverse the order of the characters in a string.
+ * 
+ * Example:
+ *   s = libstring_reverse("hello world!", 0);
+ *   # s is "!dlrow olleh"
+ *   free(s);
+ * 
  * @param   string  The string to reverse.
  * @param   flags   Additional options.
  * @return          String reversed. `NULL` on error.
@@ -552,6 +580,22 @@ char* libstring_reverse(const char*, enum libstring_reverse);
 
 
 /**
+ * Shuffle the order of the characters in a string.
+ * 
+ * You should have called `srand` before calling
+ * this function.
+ * 
+ * Example:
+ *   s = libstring_anagram("hello world!");
+ *   # s is "oh!owerld ll", or something else.
+ *   free(s);
+ *   s = libstring_anagram("hello world!");
+ *   # s is "olw! lordlhe", or something else.
+ *   free(s);
+ *   s = libstring_anagram("hello world!");
+ *   # s is "hell row old!", or something else.
+ *   free(s);
+ * 
  * @param   string  Anagram of the returned string.
  * @return          An anagram of `string`.
  *                  `NULL` on error.
@@ -566,6 +610,13 @@ char* libstring_anagram(const char*);
 
 
 /**
+ * Replace lowercase letters with uppercase letters.
+ * 
+ * Example:
+ *   s = libstring_lcase("Hello World!");
+ *   # s is "hello world!"
+ *   free(s);
+ * 
  * @param   string  The string to manipulate.
  * @return          Lowercase version of `string`.
  *                  `NULL` on error.
@@ -580,6 +631,13 @@ char* libstring_lcase(const char*);
 
 
 /**
+ * Replace uppercase letters with lowercase letters.
+ * 
+ * Example:
+ *   s = libstring_ucase("Hello World!");
+ *   # s is "HELLO WORLD!"
+ *   free(s);
+ * 
  * @param   string  The string to manipulate.
  * @return          Uppercase version of `string`.
  *                  `NULL` on error.
@@ -594,6 +652,14 @@ char* libstring_ucase(const char*);
 
 
 /**
+ * Replace the first letter with its lovercase
+ * variant if it is in upper case.
+ * 
+ * Example:
+ *   s = libstring_capitalise("hello world!");
+ *   # s is "Hello world!"
+ *   free(s);
+ * 
  * @param   string  The string to manipulate.
  * @return          Capitalised version of `string`.
  *                  `NULL` on error.
@@ -608,6 +674,14 @@ char* libstring_capitalise(const char*);
 
 
 /**
+ * Replace lowercase letters with uppercase letters,
+ * and uppercase letters with lowercase letters.
+ * 
+ * Example:
+ *   s = libstring_swapcase("Hello World!");
+ *   # s is "hELLO wORLD!"
+ *   free(s);
+ * 
  * @param   string  The string to manipulate.
  * @return          `string` with swapped cased for
  *                  all letters. `NULL` on error.
@@ -622,6 +696,8 @@ char* libstring_swapcase(const char*);
 
 
 /**
+ * Replace tabs with spaces.
+ * 
  * @param   string  The string to manipulate.
  * @param   flags   Additional options.
  * @return          `string` with 8 spaces substituted
@@ -637,6 +713,8 @@ char* libstring_expand(const char*, enum libstring_expand);
 
 
 /**
+ * Replace initial spaces of groups of 8 with tabs.
+ * 
  * @param   string  The string to manipulate.
  * @return          `string` with initial spaces of
  *                  groups of 8, replaced with tab
