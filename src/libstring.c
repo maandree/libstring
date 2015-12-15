@@ -16,257 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef LIBSTRING_H
-#define LIBSTRING_H
-
-#include <stddef.h>
-
-
-#ifdef __GNUC__
-# define LIBSTRING_GCC_ONLY(...)  __VA_ARGS__
-# define LIBSTRING_COMMON         __malloc__, __warn_unused_result__, __nonnull__
-# define LIBSTRING_LEAF           __leaf__, LIBSTRING_COMMON
-#else
-# define LIBSTRING_GCC_ONLY(...)  /* ignore */
-#endif
-
-
-
-/**
- * Flags for `libstring_split`.
- */
-enum libstring_split
-{
-  /**
-   * Match from right to left, rather
-   * than from left to right.
-   */
-  LIBSTRING_SPLIT_FROM_RIGHT = 1,
-  
-  /**
-   * Ignore case when matching.
-   */
-  LIBSTRING_SPLIT_IGNORE_CASE = 2,
-};
-
-
-/**
- * Flags for `libstring_replace`.
- */
-enum libstring_replace
-{
-  /**
-   * Match from right to left, rather
-   * than from left to right.
-   */
-  LIBSTRING_REPLACE_FROM_RIGHT = 1,
-  
-  /**
-   * Ignore case when matching.
-   */
-  LIBSTRING_REPLACE_IGNORE_CASE = 2,
-};
-
-
-/**
- * Flags for `libstring_length`.
- */
-enum libstring_length
-{
-  /**
-   * Do not count combining diacritical
-   * marks as contributing to the length
-   * of the string.
-   */
-  LIBSTRING_LENGTH_IGNORE_COMBINING = 1,
-  
-  /**
-   * Guess how many columns will be used
-   * when displayed in a terminal. Unless
-   * `LIBSTRING_LENGTH_IGNORE_COMBINING`
-   * is also used, combining diacritical
-   * marks ware assumed to not combine.
-   */
-  LIBSTRING_LENGTH_DISPLAY_LENGTH = 2,
-};
-
-
-/**
- * Flags for `libstring_utf8verify`.
- */
-enum libstring_utf8verify
-{
-  /**
-   * Accept 0xC0 0x80 as a valid
-   * byte sequence.
-   */
-  LIBSTRING_UTF8VERIFY_MOD_UTF8 = 1,
-  
-  /**
-   * Do not require that characters are
-   * encoded with as short byte sequence
-   * as possible. This implies
-   * `LIBSTRING_UTF8VERIFY_MOD_UTF8`.
-   */
-  LIBSTRING_UTF8VERIFY_LAX = 2,
-  
-  /**
-   * Use the old specification: characters
-   * are at most 31 bits, rather than the
-   * new standard: 10FFFF is the highest
-   * character (end if plane 16.)
-   */
-  LIBSTRING_UTF8VERIFY_31_BITS = 4,
-  
-  /**
-   * Implies `LIBSTRING_UTF8VERIFY_31_BITS`
-   * but extends to one additional bits,
-   * allowing negative code points for
-   * private use.
-   */
-  LIBSTRING_UTF8VERIFY_32_BITS = 8,
-  
-  /**
-   * Implies `LIBSTRING_UTF8VERIFY_32_BITS` 
-   * but extend to allow 8 bytes (42 bits),
-   * which is the highest that can be encoded
-   * with only one byte that specifies the
-   * width of the sequence.
-   */
-  LIBSTRING_UTF8VERIFY_8_BYTES = 16,
-};
-
-
-/**
- * Flags for `libstring_cut` and `libstring_vcut`.
- */
-enum libstring_cut
-{
-  /**
-   * Match from right to left, rather than
-   * from left to right.
-   */
-  LIBSTRING_CUT_FROM_RIGHT = 1,
-  
-  /**
-   * Ignore case when matching.
-   */
-  LIBSTRING_CUT_IGNORE_CASE = 2,
-  
-  /**
-   * Fields are returned in sorted order,
-   * rather than the specified order.
-   */
-  LIBSTRING_CUT_ORDERED = 4,
-  
-  /**
-   * The all fields except the specified
-   * fields shall be returned. This
-   * implies `LIBSTRING_CUT_ORDERED`.
-   */
-  LIBSTRING_CUT_COMPLEMENT = 8,
-};
-
-
-/**
- * Flags for `libstring_substring`.
- */
-enum libstring_substring
-{
-  /**
-   * The third parameter is the length
-   * rather than the end.
-   */
-  LIBSTRING_SUBSTRING_LENGTH = 1,
-  
-  /**
-   * Count from the end rather than from
-   * the beginning.
-   */
-  LIBSTRING_SUBSTRING_FROM_END = 2,
-  
-  /**
-   * Indicies are of bytes rather than
-   * of characters.
-   */
-  LIBSTRING_SUBSTRING_BYTES = 4,
-};
-
-
-/**
- * Flags for `libstring_trim`.
- * 
- * If neither `LIBSTRING_TRIM_LEFT`,
- * `LIBSTRING_TRIM_RIGHT`, nor
- * `LIBSTRING_TRIM_DUPLICATES` is specified,
- * `LIBSTRING_TRIM_LEFT` and `LIBSTRING_TRIM_RIGHT`
- * will be used.
- */
-enum libstring_trim
-{
-  /**
-   * Trim the beginning.
-   */
-  LIBSTRING_TRIM_LEFT = 1,
-  
-  /**
-   * Trim the end.
-   */
-  LIBSTRING_TRIM_RIGHT = 2,
-  
-  /**
-   * Deduplicate characters.
-   */
-  LIBSTRING_TRIM_DUPLICATES = 4,
-};
-
-
-/**
- * Flags for `libstring_reverse`.
- */
-enum libstring_reverse
-{
-  /**
-   * Treat combining diacritical marks
-   * as part of the letters it is on.
-   */
-  LIBSTRING_REVERSE_KEEP_COMBINING = 1,
-};
-
-
-enum libstring_expand
-{
-  /**
-   * Do not count combining diacritical
-   * marks as contributing to the length
-   * of the string.
-   */
-  LIBSTRING_EXPAND_IGNORE_COMBINING = 1,
-  
-  /**
-   * Guess how many columns will be used
-   * when displayed in a terminal. Unless
-   * `LIBSTRING_LENGTH_IGNORE_COMBINING`
-   * is also used, combining diacritical
-   * marks ware assumed to not combine.
-   */
-  LIBSTRING_EXPAND_DISPLAY_LENGTH = 2,
-  
-  /**
-   * Do not count backspaces as
-   * contributing negatively to the length
-   * of the string.
-   */
-  LIBSTRING_EXPAND_IGNORE_BACKSPACE = 4,
-  
-  /**
-   * Only expand beginning of the line,
-   * stop at any other character space
-   * and tab space. This implies
-   * `LIBSTRING_EXPAND_IGNORE_BACKSPACE`.
-   */
-  LIBSTRING_EXPAND_INITIAL_ONLY = 8,
-};
+#include "libstring.h"
+#include <string.h>
+#include <stdlib.h>
 
 
 
@@ -295,11 +47,9 @@ enum libstring_expand
  *                   concatenated in order, without any
  *                   delimiter. `NULL` on error.
  */
-LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF(1))))
-char* libstring_cat(const char* const*, const size_t*);
-#ifdef LIBSTRING_SHORT_NAMES
-# define strmulcat  libstring_cat
-#endif
+char* libstring_cat(const char* const* strings, const size_t* n)
+{
+}
 
 
 /**
@@ -316,11 +66,9 @@ char* libstring_cat(const char* const*, const size_t*);
  *                      concatenated in order, without any
  *                      delimiter. `NULL` on error.
  */
-LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_COMMON, __sentinel__(0))))
-char* libstring_vcat(const char*, ... /*, (char*)0 */);
-#ifdef LIBSTRING_SHORT_NAMES
-# define vstrmulcat  libstring_vcat
-#endif
+char* libstring_vcat(const char* strings, ... /*, (char*)0 */)
+{
+}
 
 
 /**
@@ -351,11 +99,9 @@ char* libstring_vcat(const char*, ... /*, (char*)0 */);
  * 
  * @throws  ENOMEM  The process cannot enough memory.
  */
-LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF(1, 3))))
-char* libstring_join(const char* const*, const size_t*, const char*);
-#ifdef LIBSTRING_SHORT_NAMES
-# define strjoin  libstring_join
-#endif
+char* libstring_join(const char* const* strings, const size_t* n, const char* delimiter)
+{
+}
 
 
 /**
@@ -375,11 +121,9 @@ char* libstring_join(const char* const*, const size_t*, const char*);
  * 
  * @throws  ENOMEM  The process cannot enough memory.
  */
-LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_COMMON, __sentinel__(1))))
-char* libstring_vjoin(const char*, ... /*, (char*)0, const char* */);
-#ifdef LIBSTRING_SHORT_NAMES
-# define vstrjoin  libstring_vjoin
-#endif
+char* libstring_vjoin(const char* strings, ... /*, (char*)0, const char* delimiter */)
+{
+}
 
 
 /**
@@ -396,11 +140,9 @@ char* libstring_vjoin(const char*, ... /*, (char*)0, const char* */);
  * 
  * @throws  ENOMEM  The process cannot enough memory.
  */
-LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF(1, 2))))
-char** libstring_split(const char*, const char*, size_t*, enum libstring_split);
-#ifdef LIBSTRING_SHORT_NAMES
-# define strsplit  libstring_split
-#endif
+char** libstring_split(const char* string, const char* delimiter, size_t* n, enum libstring_split flags)
+{
+}
 
 
 /**
@@ -415,11 +157,9 @@ char** libstring_split(const char*, const char*, size_t*, enum libstring_split);
  * 
  * @throws  ENOMEM  The process cannot enough memory.
  */
-LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
-char* libstring_replace(const char*, const char*, const char*, enum libstring_replace);
-#ifdef LIBSTRING_SHORT_NAMES
-# define strreplace  libstring_replace
-#endif
+char* libstring_replace(const char* string, const char* from, const char* to, enum libstring_replace flags)
+{
+}
 
 
 /**
@@ -435,11 +175,9 @@ char* libstring_replace(const char*, const char*, const char*, enum libstring_re
  * 
  * @throws  ENOMEM  The process cannot enough memory.
  */
-LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
-char* libstring_shellsafe(const char*);
-#ifdef LIBSTRING_SHORT_NAMES
-# define strshsafe  libstring_shellsafe
-#endif
+char* libstring_shellsafe(const char* string)
+{
+}
 
 
 /**
@@ -449,11 +187,9 @@ char* libstring_shellsafe(const char*);
  * @param   flags   Additional options.
  * @return          The length of `string`.
  */
-LIBSTRING_GCC_ONLY(__attribute__((__warn_unused_result__, __nonnull__, __leaf__)))
-size_t libstring_length(const char*, enum libstring_length);
-#ifdef LIBSTRING_SHORT_NAMES
-# define strdisplen  libstring_length
-#endif
+size_t libstring_length(const char* string, enum libstring_length flags)
+{
+}
 
 
 /**
@@ -463,11 +199,9 @@ size_t libstring_length(const char*, enum libstring_length);
  * @param   flags   Additional options.
  * @return          0 if the string is valid, -1 otherwise.
  */
-LIBSTRING_GCC_ONLY(__attribute__((__warn_unused_result__, __nonnull__, __leaf__)))
-int libstring_utf8verify(const char*, enum libstring_utf8verify);
-#ifdef LIBSTRING_SHORT_NAMES
-# define strverify  libstring_utf8verify
-#endif
+int libstring_utf8verify(const char* string, enum libstring_utf8verify flags)
+{
+}
 
 
 /**
@@ -486,11 +220,10 @@ int libstring_utf8verify(const char*, enum libstring_utf8verify);
  * 
  * @throws  ENOMEM  The process cannot enough memory.
  */
-LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF(1, 2, 3))))
-char** libstring_cut(const char*, const char*, const size_t*, size_t, size_t*, enum libstring_cut);
-#ifdef LIBSTRING_SHORT_NAMES
-# define strcut  libstring_cut
-#endif
+char** libstring_cut(const char* string, const char* delimiter, const size_t* fields,
+		     size_t fields_n, size_t* n, enum libstring_cut flags)
+{
+}
 
 
 /**
@@ -509,11 +242,10 @@ char** libstring_cut(const char*, const char*, const size_t*, size_t, size_t*, e
  * 
  * @throws  ENOMEM  The process cannot enough memory.
  */
-LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_COMMON(1, 2))))
-char** libstring_vcut(const char*, const char*, size_t, ... /*, SIZE_MAX, size_t*, enum libstring_cut */);
-#ifdef LIBSTRING_SHORT_NAMES
-# define vstrcut  libstring_vcut
-#endif
+char** libstring_vcut(const char* string, const char* delimiter, size_t fields,
+		      ... /*, SIZE_MAX, size_t* n, enum libstring_cut flags */)
+{
+}
 
 
 /**
@@ -530,11 +262,9 @@ char** libstring_vcut(const char*, const char*, size_t, ... /*, SIZE_MAX, size_t
  * 
  * @throws  ENOMEM  The process cannot enough memory.
  */
-LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
-char* libstring_substring(const char*, size_t, size_t, enum libstring_substring);
-#ifdef LIBSTRING_SHORT_NAMES
-# define strsub  libstring_substring
-#endif
+char* libstring_substring(const char* string, size_t start, size_t end, enum libstring_substring flags)
+{
+}
 
 
 /**
@@ -553,11 +283,9 @@ char* libstring_substring(const char*, size_t, size_t, enum libstring_substring)
  * 
  * @throws  ENOMEM  The process cannot enough memory.
  */
-LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF(1))))
-char* libstring_trim(const char*, const char*, enum libstring_trim);
-#ifdef LIBSTRING_SHORT_NAMES
-# define strtrim  libstring_trim
-#endif
+char* libstring_trim(const char* string, const char* symbols, enum libstring_trim flags)
+{
+}
 
 
 /**
@@ -574,11 +302,9 @@ char* libstring_trim(const char*, const char*, enum libstring_trim);
  * 
  * @throws  ENOMEM  The process cannot enough memory.
  */
-LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
-char* libstring_reverse(const char*, enum libstring_reverse);
-#ifdef LIBSTRING_SHORT_NAMES
-# define strrev  libstring_reverse
-#endif
+char* libstring_reverse(const char* string, enum libstring_reverse flags)
+{
+}
 
 
 /**
@@ -604,11 +330,9 @@ char* libstring_reverse(const char*, enum libstring_reverse);
  * 
  * @throws  ENOMEM  The process cannot enough memory.
  */
-LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
-char* libstring_anagram(const char*);
-#ifdef LIBSTRING_SHORT_NAMES
-# define stranagram  libstring_anagram
-#endif
+char* libstring_anagram(const char* string)
+{
+}
 
 
 /**
@@ -625,11 +349,9 @@ char* libstring_anagram(const char*);
  * 
  * @throws  ENOMEM  The process cannot enough memory.
  */
-LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
-char* libstring_lcase(const char*);
-#ifdef LIBSTRING_SHORT_NAMES
-# define strlcase  libstring_lcase
-#endif
+char* libstring_lcase(const char* string)
+{
+}
 
 
 /**
@@ -646,11 +368,9 @@ char* libstring_lcase(const char*);
  * 
  * @throws  ENOMEM  The process cannot enough memory.
  */
-LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
-char* libstring_ucase(const char*);
-#ifdef LIBSTRING_SHORT_NAMES
-# define strucase  libstring_ucase
-#endif
+char* libstring_ucase(const char* string)
+{
+}
 
 
 /**
@@ -668,11 +388,9 @@ char* libstring_ucase(const char*);
  * 
  * @throws  ENOMEM  The process cannot enough memory.
  */
-LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
-char* libstring_capitalise(const char*);
-#ifdef LIBSTRING_SHORT_NAMES
-# define strcap  libstring_capitalise
-#endif
+char* libstring_capitalise(const char* string)
+{
+}
 
 
 /**
@@ -690,11 +408,9 @@ char* libstring_capitalise(const char*);
  * 
  * @throws  ENOMEM  The process cannot enough memory.
  */
-LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
-char* libstring_swapcase(const char*);
-#ifdef LIBSTRING_SHORT_NAMES
-# define strscase  libstring_swapcase
-#endif
+char* libstring_swapcase(const char* string)
+{
+}
 
 
 /**
@@ -707,11 +423,9 @@ char* libstring_swapcase(const char*);
  * 
  * @throws  ENOMEM  The process cannot enough memory.
  */
-LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
-char* libstring_expand(const char*, enum libstring_expand);
-#ifdef LIBSTRING_SHORT_NAMES
-# define strexp  libstring_expand
-#endif
+char* libstring_expand(const char* string, enum libstring_expand flags)
+{
+}
 
 
 /**
@@ -724,11 +438,9 @@ char* libstring_expand(const char*, enum libstring_expand);
  * 
  * @throws  ENOMEM  The process cannot enough memory.
  */
-LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
-char* libstring_unexpand(const char*);
-#ifdef LIBSTRING_SHORT_NAMES
-# define strunexp  libstring_unexpand
-#endif
+char* libstring_unexpand(const char* string)
+{
+}
 
 
 /**
@@ -750,11 +462,9 @@ char* libstring_unexpand(const char*);
  * 
  * @throws  ENOMEM  The process cannot enough memory.
  */
-LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
-char* libstring_rot13(const char*);
-#ifdef LIBSTRING_SHORT_NAMES
-# define strrot13  libstring_rot13
-#endif
+char* libstring_rot13(const char* string)
+{
+}
 
 
 /**
@@ -770,21 +480,7 @@ char* libstring_rot13(const char*);
  * 
  * @throws  ENOMEM  The process cannot enough memory.
  */
-LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF)))
-char* libstring_double_rot13(const char*);
-#ifdef LIBSTRING_SHORT_NAMES
-# define str2rot13  libstring_double_rot13
-#endif
-
-
-
-#undef LIBSTRING_GCC_ONLY
-#ifdef LIBSTRING_COMMON
-# undef LIBSTRING_COMMON
-#endif
-#ifdef LIBSTRING_LEAF
-# undef LIBSTRING_LEAF
-#endif
-
-#endif
+char* libstring_double_rot13(const char* string)
+{
+}
 
