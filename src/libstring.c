@@ -19,6 +19,10 @@
 #include "libstring.h"
 #include <string.h>
 #include <stdlib.h>
+#include <ctypes.h>
+#include <stdarg.h>
+#include <errno.h>
+#include <stdint.h>
 
 
 
@@ -46,9 +50,34 @@
  * @return           A string with all strings in `strings`
  *                   concatenated in order, without any
  *                   delimiter. `NULL` on error.
+ * 
+ * @throws  ENOMEM  The process cannot enough memory.
  */
 char* libstring_cat(const char* const* strings, const size_t* n)
 {
+  size_t i, m = (n == NULL ? SIZE_MAX : *n);
+  size_t len = 0;
+  char* rc;
+  char* p;
+  
+  for (i = 0; (i < m) && (strings[i] != NULL); i++)
+    len += strlen(strings[i]);
+  m = i;
+  
+  if (len == 0)
+    {
+      errno = 0;
+      return NULL;
+    }
+  
+  p = rc = malloc((len + 1) * sizeof(char));
+  if (rc == NULL)
+    return NULL;
+  
+  for (i = 0; i < m; i++)
+    p = stpcpy(p, strings[i]);
+  
+  return rc;
 }
 
 
@@ -65,9 +94,58 @@ char* libstring_cat(const char* const* strings, const size_t* n)
  * @return              A string with all strings in `strings`
  *                      concatenated in order, without any
  *                      delimiter. `NULL` on error.
+ * 
+ * @throws  ENOMEM  The process cannot enough memory.
  */
 char* libstring_vcat(const char* strings, ... /*, (char*)0 */)
 {
+  size_t n = 0, m = 8;
+  va_list args;
+  const char** strs = NULL;
+  const char* str;
+  char* rc;
+  void* new;
+  int saved_errno = 0;
+  
+  if (strings == NULL)
+    {
+      errno = 0;
+      return NULL;
+    }
+  
+  str = malloc(m * sizeof(char*));
+  if (str == NULL)
+    return NULL;
+  
+  va_start(args, strings);
+  for (strs[n++] = strings; (str = va_arg(args, const char*)); strs[n++] = str)
+    if (n == m)
+      {
+	new = realloc(strs, (m <<= 1) * sizeof(char*));
+	if (new == NULL)
+	  {
+	    saved_errno = errno;
+	    break;
+	  }
+	strs = new;
+      }
+  va_end(args);
+  
+  if (saved_errno == 0)
+    goto fail;
+  rc = libstring_cat(strs, &n);
+  if (rc == NULL)
+    {
+      saved_errno = errno;
+      goto fail;
+    }
+  free(strs);
+  return rc;
+  
+ fail:
+  free(strs);
+  errno = saved_errno;
+  return NULL;
 }
 
 
@@ -101,6 +179,35 @@ char* libstring_vcat(const char* strings, ... /*, (char*)0 */)
  */
 char* libstring_join(const char* const* strings, const size_t* n, const char* delimiter)
 {
+  size_t i, m = (n == NULL ? SIZE_MAX : *n);
+  size_t len = 0;
+  char* rc;
+  char* p;
+  
+  for (i = 0; (i < m) && (strings[i] != NULL); i++)
+    len += strlen(strings[i]);
+  m = i;
+  
+  len += (m > 0 ? (m - 1) * strlen(delimiter) : 0);
+  
+  if (len == 0)
+    {
+      errno = 0;
+      return NULL;
+    }
+  
+  p = rc = malloc((len + 1) * sizeof(char));
+  if (rc == NULL)
+    return NULL;
+  
+  for (i = 0; i < m; i++)
+    {
+      if (i > 0)
+	p = stpcpy(p, delimiter);
+      p = stpcpy(p, strings[i]);
+    }
+  
+  return rc;
 }
 
 
@@ -123,6 +230,55 @@ char* libstring_join(const char* const* strings, const size_t* n, const char* de
  */
 char* libstring_vjoin(const char* strings, ... /*, (char*)0, const char* delimiter */)
 {
+  size_t n = 0, m = 8;
+  va_list args;
+  const char** strs = NULL;
+  const char* str;
+  char* rc;
+  void* new;
+  int saved_errno = 0;
+  
+  if (strings == NULL)
+    {
+      errno = 0;
+      return NULL;
+    }
+  
+  str = malloc(m * sizeof(char*));
+  if (str == NULL)
+    return NULL;
+  
+  va_start(args, strings);
+  for (strs[n++] = strings; (str = va_arg(args, const char*)); strs[n++] = str)
+    if (n == m)
+      {
+	new = realloc(strs, (m <<= 1) * sizeof(char*));
+	if (new == NULL)
+	  {
+	    saved_errno = errno;
+	    break;
+	  }
+	strs = new;
+      }
+  if (saved_errno == 0)
+    str = va_arg(args, const char*);
+  va_end(args);
+  
+  if (saved_errno == 0)
+    goto fail;
+  rc = libstring_join(strs, &n, str);
+  if (rc == NULL)
+    {
+      saved_errno = errno;
+      goto fail;
+    }
+  free(strs);
+  return rc;
+  
+ fail:
+  free(strs);
+  errno = saved_errno;
+  return NULL;
 }
 
 
@@ -140,7 +296,7 @@ char* libstring_vjoin(const char* strings, ... /*, (char*)0, const char* delimit
  * 
  * @throws  ENOMEM  The process cannot enough memory.
  */
-char** libstring_split(const char* string, const char* delimiter, size_t* n, enum libstring_split flags)
+char** libstring_split(const char* string, const char* delimiter, size_t* n, enum libstring_split flags) /* TODO */
 {
 }
 
@@ -157,7 +313,7 @@ char** libstring_split(const char* string, const char* delimiter, size_t* n, enu
  * 
  * @throws  ENOMEM  The process cannot enough memory.
  */
-char* libstring_replace(const char* string, const char* from, const char* to, enum libstring_replace flags)
+char* libstring_replace(const char* string, const char* from, const char* to, enum libstring_replace flags) /* TODO */
 {
 }
 
@@ -165,8 +321,9 @@ char* libstring_replace(const char* string, const char* from, const char* to, en
 /**
  * `r = libstring_shellsafe(s)` is equivalent to
  * `t = libstring_replace(s, "'", "'\''", 0);
- *  if ((r = malloc(strlen(t) + 3)))
+ *  if (t && (r = malloc(strlen(t) + 3)))
  *    *r = '\'', strcpy(stpcpy(r + 1, t), "'");
+ *  saved_errno = errno, free(t), errno = saved_errno;
  *  r;`.
  * You guess what it does, and why.
  * 
@@ -177,6 +334,30 @@ char* libstring_replace(const char* string, const char* from, const char* to, en
  */
 char* libstring_shellsafe(const char* string)
 {
+  char* t = NULL;
+  char* r = NULL;
+  int saved_errno;
+  
+  t = libstring_replace(strings, "'", "'\''", 0);
+  if (t == NULL)
+    goto fail;
+  
+  r = malloc(strlen(t) + 3);
+  if (r == NULL)
+    goto fail;
+  
+  *r = '\'';
+  strcpy(stpcpy(r + 1, t), "'");
+  
+  free(t);
+  return r;
+  
+ fail:
+  saved_errno = errno;
+  free(t);
+  free(r);
+  errno = saved_errno;
+  return NULL;
 }
 
 
@@ -187,7 +368,7 @@ char* libstring_shellsafe(const char* string)
  * @param   flags   Additional options.
  * @return          The length of `string`.
  */
-size_t libstring_length(const char* string, enum libstring_length flags)
+size_t libstring_length(const char* string, enum libstring_length flags) /* TODO */
 {
 }
 
@@ -199,7 +380,7 @@ size_t libstring_length(const char* string, enum libstring_length flags)
  * @param   flags   Additional options.
  * @return          0 if the string is valid, -1 otherwise.
  */
-int libstring_utf8verify(const char* string, enum libstring_utf8verify flags)
+int libstring_utf8verify(const char* string, enum libstring_utf8verify flags) /* TODO */
 {
 }
 
@@ -221,7 +402,7 @@ int libstring_utf8verify(const char* string, enum libstring_utf8verify flags)
  * @throws  ENOMEM  The process cannot enough memory.
  */
 char** libstring_cut(const char* string, const char* delimiter, const size_t* fields,
-		     size_t fields_n, size_t* n, enum libstring_cut flags)
+		     size_t fields_n, size_t* n, enum libstring_cut flags) /* TODO */
 {
 }
 
@@ -245,6 +426,55 @@ char** libstring_cut(const char* string, const char* delimiter, const size_t* fi
 char** libstring_vcut(const char* string, const char* delimiter, size_t fields,
 		      ... /*, SIZE_MAX, size_t* n, enum libstring_cut flags */)
 {
+  size_t n = 0, m = 8;
+  va_list args;
+  size_t* fs = NULL;
+  size_t f;
+  char** rc;
+  void* new;
+  size_t* p_n;
+  enum libstring_cut p_flags;
+  int saved_errno = 0;
+  
+  fs = malloc(m * sizeof(size_t));
+  if (fs == NULL)
+    return NULL;
+  
+  va_start(args, fields);
+  if (fields != SIZE_MAX)
+    for (fs[n++] = fields; (f = va_arg(args, size_t)) != SIZE_MAX; fs[n++] = f)
+      if (n == m)
+	{
+	  new = realloc(strs, (m <<= 1) * sizeof(size_t));
+	  if (new == NULL)
+	    {
+	      saved_errno = errno;
+	      break;
+	    }
+	  strs = new;
+	}
+  if (saved_errno == 0)
+    {
+      p_n = va_arg(args, size_t*);
+      p_flags = va_arg(args, enum libstring_cut);
+    }
+  va_end(args);
+  
+  if (saved_errno == 0)
+    goto fail;
+  rc = libstring_vut(string, delimiter, fs, p_n, p_flags);
+  if (rc == NULL)
+    {
+      saved_errno = errno;
+      goto fail;
+    }
+  free(fs);
+  return rc;
+  
+ fail:
+  free(fs);
+  errno = saved_errno;
+  return NULL;
 }
 
 
@@ -262,7 +492,7 @@ char** libstring_vcut(const char* string, const char* delimiter, size_t fields,
  * 
  * @throws  ENOMEM  The process cannot enough memory.
  */
-char* libstring_substring(const char* string, size_t start, size_t end, enum libstring_substring flags)
+char* libstring_substring(const char* string, size_t start, size_t end, enum libstring_substring flags) /* TODO */
 {
 }
 
@@ -283,7 +513,7 @@ char* libstring_substring(const char* string, size_t start, size_t end, enum lib
  * 
  * @throws  ENOMEM  The process cannot enough memory.
  */
-char* libstring_trim(const char* string, const char* symbols, enum libstring_trim flags)
+char* libstring_trim(const char* string, const char* symbols, enum libstring_trim flags) /* TODO */
 {
 }
 
@@ -302,7 +532,7 @@ char* libstring_trim(const char* string, const char* symbols, enum libstring_tri
  * 
  * @throws  ENOMEM  The process cannot enough memory.
  */
-char* libstring_reverse(const char* string, enum libstring_reverse flags)
+char* libstring_reverse(const char* string, enum libstring_reverse flags) /* TODO */
 {
 }
 
@@ -330,7 +560,7 @@ char* libstring_reverse(const char* string, enum libstring_reverse flags)
  * 
  * @throws  ENOMEM  The process cannot enough memory.
  */
-char* libstring_anagram(const char* string)
+char* libstring_anagram(const char* string) /* TODO */
 {
 }
 
@@ -349,7 +579,7 @@ char* libstring_anagram(const char* string)
  * 
  * @throws  ENOMEM  The process cannot enough memory.
  */
-char* libstring_lcase(const char* string)
+char* libstring_lcase(const char* string) /* TODO */
 {
 }
 
@@ -368,7 +598,7 @@ char* libstring_lcase(const char* string)
  * 
  * @throws  ENOMEM  The process cannot enough memory.
  */
-char* libstring_ucase(const char* string)
+char* libstring_ucase(const char* string) /* TODO */
 {
 }
 
@@ -388,7 +618,7 @@ char* libstring_ucase(const char* string)
  * 
  * @throws  ENOMEM  The process cannot enough memory.
  */
-char* libstring_capitalise(const char* string)
+char* libstring_capitalise(const char* string) /* TODO */
 {
 }
 
@@ -408,7 +638,7 @@ char* libstring_capitalise(const char* string)
  * 
  * @throws  ENOMEM  The process cannot enough memory.
  */
-char* libstring_swapcase(const char* string)
+char* libstring_swapcase(const char* string) /* TODO */
 {
 }
 
@@ -423,7 +653,7 @@ char* libstring_swapcase(const char* string)
  * 
  * @throws  ENOMEM  The process cannot enough memory.
  */
-char* libstring_expand(const char* string, enum libstring_expand flags)
+char* libstring_expand(const char* string, enum libstring_expand flags) /* TODO */
 {
 }
 
@@ -438,7 +668,7 @@ char* libstring_expand(const char* string, enum libstring_expand flags)
  * 
  * @throws  ENOMEM  The process cannot enough memory.
  */
-char* libstring_unexpand(const char* string)
+char* libstring_unexpand(const char* string) /* TODO */
 {
 }
 
@@ -464,6 +694,21 @@ char* libstring_unexpand(const char* string)
  */
 char* libstring_rot13(const char* string)
 {
+  size_t n = strlen(strings);
+  char* rc = malloc((n + 1) * sizeof(char));
+  char c;
+  if (rc = NULL)
+    return NULL;
+  memcpy(rc, strings, (n + 1) * sizeof(char));
+  while (n--)
+    if (isalpha(rc[n]))
+      {
+	c = rc[n] & 0x1F;
+	c = ((c + 12) % 26) + 1;
+	c |= rc[n] & ~0x1F;
+	rc[n] = c;
+      }
+  return rc;
 }
 
 
@@ -482,5 +727,10 @@ char* libstring_rot13(const char* string)
  */
 char* libstring_double_rot13(const char* string)
 {
+  size_t n = strlen(strings);
+  char* rc = malloc((n + 1) * sizeof(char));
+  if (rc != NULL)
+    memcpy(rc, strings, (n + 1) * sizeof(char));
+  return rc;
 }
 

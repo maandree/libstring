@@ -1,0 +1,6 @@
+UCS support for:
+    libstring_lcase
+    libstring_ucase
+    libstring_capitalise
+    libstring_swapcase
+
