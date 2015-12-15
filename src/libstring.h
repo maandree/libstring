@@ -383,7 +383,7 @@ char* libstring_vjoin(const char*, ... /*, (char*)0, const char* */);
 
 
 /**
- * TODO
+ * Split a string at each occurrence of a selected delimiter.
  * 
  * @param   string     String to split.
  * @param   delimiter  The delimiter.
@@ -404,7 +404,7 @@ char** libstring_split(const char*, const char*, size_t*, enum libstring_split);
 
 
 /**
- * TODO
+ * Replace a substrings in a string.
  * 
  * @param   string  The string to manipulate.
  * @param   from    Substring to replace.
@@ -471,7 +471,8 @@ int libstring_utf8verify(const char*, enum libstring_utf8verify);
 
 
 /**
- * TODO
+ * Split a string at each occurrence of a selected delimiter,
+ * but retain only select fields.
  * 
  * @param   string     The string to cut.
  * @param   delimiter  The delimiter.
@@ -493,7 +494,8 @@ char** libstring_cut(const char*, const char*, const size_t*, size_t, size_t*, e
 
 
 /**
- * TODO
+ * Split a string at each occurrence of a selected delimiter,
+ * but retain only select fields.
  * 
  * @param   string     The string to cut.
  * @param   delimiter  The delimiter.
