@@ -368,6 +368,23 @@ int libstring_utf8verify(const char* string, enum libstring_utf8verify flags) /*
 
 
 /**
+ * Compare two `size_t`.
+ * 
+ * @param   a  Pointer to one of the `size_t`.
+ * @param   b  Pointer to the other `size_t`.
+ * @return     -1 if `*a` < `*b`, 0 if `*a` = `*b`, +1 if `*a` > `*b`.
+ */
+static int size_cmp(const void* a, const void* b)
+{
+  const size_t* i = a;
+  const size_t* j = b;
+  if (*i != *j)
+    return (*i < *j) ? -1 : +1;
+  return 0;
+}
+
+
+/**
  * Split a string at each occurrence of a selected delimiter,
  * but retain only select fields.
  * 
@@ -384,8 +401,100 @@ int libstring_utf8verify(const char* string, enum libstring_utf8verify flags) /*
  * @throws  ENOMEM  The process cannot enough memory.
  */
 char** libstring_cut(const char* string, const char* delimiter, const size_t* fields,
-		     size_t fields_n, size_t* n, enum libstring_cut flags) /* TODO */
+		     size_t fields_n, size_t* n, enum libstring_cut flags)
 {
+  enum libstring_split split_flags = 0;
+  char** fs = NULL;
+  char** fs_ = NULL;
+  size_t fn = 0, fn_ = 0, i, j, f, last = SIZE_MAX;
+  size_t* fields_ = NULL;
+  int saved_errno;
+  void* new;
+  
+  split_flags |= (flags & LIBSTRING_CUT_FROM_RIGHT)  ? LIBSTRING_SPLIT_FROM_RIGHT  : 0;
+  split_flags |= (flags & LIBSTRING_CUT_IGNORE_CASE) ? LIBSTRING_SPLIT_IGNORE_CASE : 0;
+  
+  if ((flags & LIBSTRING_CUT_COMPLEMENT))
+    flags |= LIBSTRING_CUT_ORDERED;
+  
+  if ((flags & (LIBSTRING_CUT_ORDERED | LIBSTRING_CUT_REVERSED)))
+    {
+      fields = fields_ = malloc((fields_n + 1) * sizeof(size_t));
+      if (fields_ == NULL)
+	goto fail;
+      memcpy(fields_, fields, fields_n * sizeof(size_t));
+      if ((flags & LIBSTRING_CUT_ORDERED))
+	qsort(fields_, fields_n, sizeof(size_t), size_cmp);
+      for (i = j = 0; i < fields_n; i++)
+	if (fields_[i] != last)
+	  {
+	    last = fields_[i];
+	    fields_[j++] = fields_[i];
+	  }
+      fields_n = i;
+      fields_[i] = SIZE_MAX;
+    }
+  
+  fs = libstring_split(string, delimiter, &fn, split_flags);
+  if (fs == NULL)
+    goto fail;
+  
+  if ((flags & LIBSTRING_CUT_REVERSED))
+    {
+      for (i = 0; i < fields_n; i++)
+	fields_[i] = fn - 1 - fields_[i];
+      if ((flags & LIBSTRING_CUT_ORDERED))
+	for (i = 0, j = fields_n - 1; i < j; i++, j--)
+	  last = fields_[i], fields_[i] = fields_[j], fields_[j] = last;
+    }
+  
+  if ((flags & LIBSTRING_CUT_ORDERED))
+    {
+      for (i = j = f = 0; i < fn; i++)
+	{
+	  while ((f < fields_n) && (fields[f] < i))
+	    f++;
+	  if ((flags & LIBSTRING_CUT_COMPLEMENT) ? (fields[f] != i) : (fields[f] == i))
+	    fs[j++] = fs[i], f++;
+	  else
+	    free(fs[i]);
+	}
+      fn = j;
+      fs[fn] = NULL;
+      free(fields_);
+      if (n != NULL)
+	*n = fn;
+      new = realloc(fs, (fn + 1) * sizeof(*fs));
+      if (new != NULL)
+	fs = new;
+      return fs;
+    }
+  
+  fs_ = malloc((fields_n + 1) * sizeof(char*));
+  if (fs_ == NULL)
+    goto fail;
+  for (fn_ = 0; fn_ < fields_n; fn_++)
+    fs_[fn_] = fs[fields[fn_]];
+  free(fields_);
+  while (fn--)
+    free(fs[fn]);
+  free(fs);
+  fs_[fields_n] = NULL;
+  return fs_;
+  
+ fail:
+  saved_errno = errno;
+  free(fields_);
+  if (fs != NULL)
+    while (fn--)
+      free(fs[fn]);
+  free(fs);
+  if (fs_ != NULL)
+    while (fn_--)
+      free(fs_[fn_]);
+  free(fs_);
+  errno = saved_errno;
+  return NULL;
 }
 
 
@@ -444,7 +553,7 @@ char** libstring_vcut(const char* string, const char* delimiter, size_t fields,
   
   if (saved_errno == 0)
     goto fail;
-  rc = libstring_vut(string, delimiter, fs, p_n, p_flags);
+  rc = libstring_cut(string, delimiter, fs, p_n, p_flags);
   if (rc == NULL)
     {
       saved_errno = errno;

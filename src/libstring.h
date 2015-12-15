@@ -156,6 +156,8 @@ enum libstring_cut
   /**
    * Fields are returned in sorted order,
    * rather than the specified order.
+   * Additionally, field indices are
+   * deduplicated.
    */
   LIBSTRING_CUT_ORDERED = 4,
   
@@ -165,6 +167,13 @@ enum libstring_cut
    * implies `LIBSTRING_CUT_ORDERED`.
    */
   LIBSTRING_CUT_COMPLEMENT = 8,
+  
+  /**
+   * Fields are indexed from right
+   * to left rather than from
+   * left to right.
+   */
+  LIBSTRING_CUT_REVERSED = 16,
 };
 
 
