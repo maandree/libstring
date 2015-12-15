@@ -64,12 +64,6 @@ char* libstring_cat(const char* const* strings, const size_t* n)
     len += strlen(strings[i]);
   m = i;
   
-  if (len == 0)
-    {
-      errno = 0;
-      return NULL;
-    }
-  
   p = rc = malloc((len + 1) * sizeof(char));
   if (rc == NULL)
     return NULL;
@@ -108,10 +102,7 @@ char* libstring_vcat(const char* strings, ... /*, (char*)0 */)
   int saved_errno = 0;
   
   if (strings == NULL)
-    {
-      errno = 0;
-      return NULL;
-    }
+    return libstring_double_rot13("");
   
   str = malloc(m * sizeof(char*));
   if (str == NULL)
@@ -190,12 +181,6 @@ char* libstring_join(const char* const* strings, const size_t* n, const char* de
   
   len += (m > 0 ? (m - 1) * strlen(delimiter) : 0);
   
-  if (len == 0)
-    {
-      errno = 0;
-      return NULL;
-    }
-  
   p = rc = malloc((len + 1) * sizeof(char));
   if (rc == NULL)
     return NULL;
@@ -239,10 +224,7 @@ char* libstring_vjoin(const char* strings, ... /*, (char*)0, const char* delimit
   int saved_errno = 0;
   
   if (strings == NULL)
-    {
-      errno = 0;
-      return NULL;
-    }
+    return libstring_double_rot13("");
   
   str = malloc(m * sizeof(char*));
   if (str == NULL)
@@ -579,8 +561,18 @@ char* libstring_anagram(const char* string) /* TODO */
  * 
  * @throws  ENOMEM  The process cannot enough memory.
  */
-char* libstring_lcase(const char* string) /* TODO */
+char* libstring_lcase(const char* string)
 {
+  size_t n = strlen(strings);
+  char* rc = malloc((n + 1) * sizeof(char));
+  char c;
+  if (rc = NULL)
+    return NULL;
+  memcpy(rc, strings, (n + 1) * sizeof(char));
+  while (n--)
+    if (islower(rc[n]))
+      rc[n] ^= 'A' ^ 'a';
+  return rc;
 }
 
 
@@ -598,8 +590,18 @@ char* libstring_lcase(const char* string) /* TODO */
  * 
  * @throws  ENOMEM  The process cannot enough memory.
  */
-char* libstring_ucase(const char* string) /* TODO */
+char* libstring_ucase(const char* string)
 {
+  size_t n = strlen(strings);
+  char* rc = malloc((n + 1) * sizeof(char));
+  char c;
+  if (rc = NULL)
+    return NULL;
+  memcpy(rc, strings, (n + 1) * sizeof(char));
+  while (n--)
+    if (isupper(rc[n]))
+      rc[n] ^= 'A' ^ 'a';
+  return rc;
 }
 
 
@@ -618,8 +620,17 @@ char* libstring_ucase(const char* string) /* TODO */
  * 
  * @throws  ENOMEM  The process cannot enough memory.
  */
-char* libstring_capitalise(const char* string) /* TODO */
+char* libstring_capitalise(const char* string)
 {
+  size_t n = strlen(strings);
+  char* rc = malloc((n + 1) * sizeof(char));
+  char c;
+  if (rc = NULL)
+    return NULL;
+  memcpy(rc, strings, (n + 1) * sizeof(char));
+  if (islower(*rc))
+    *rc ^= 'A' ^ 'a';
+  return rc;
 }
 
 
@@ -638,8 +649,18 @@ char* libstring_capitalise(const char* string) /* TODO */
  * 
  * @throws  ENOMEM  The process cannot enough memory.
  */
-char* libstring_swapcase(const char* string) /* TODO */
+char* libstring_swapcase(const char* string)
 {
+  size_t n = strlen(strings);
+  char* rc = malloc((n + 1) * sizeof(char));
+  char c;
+  if (rc = NULL)
+    return NULL;
+  memcpy(rc, strings, (n + 1) * sizeof(char));
+  while (n--)
+    if (isalpha(rc[n]))
+      rc[n] ^= 'A' ^ 'a';
+  return rc;
 }
 
 
