@@ -294,6 +294,8 @@ enum libstring_expand
  * @return           A string with all strings in `strings`
  *                   concatenated in order, without any
  *                   delimiter. `NULL` on error.
+ * 
+ * @throws  ENOMEM  The process cannot enough memory.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_LEAF(1))))
 char* libstring_cat(const char* const*, const size_t*);
@@ -315,6 +317,8 @@ char* libstring_cat(const char* const*, const size_t*);
  * @return              A string with all strings in `strings`
  *                      concatenated in order, without any
  *                      delimiter. `NULL` on error.
+ * 
+ * @throws  ENOMEM  The process cannot enough memory.
  */
 LIBSTRING_GCC_ONLY(__attribute__((LIBSTRING_COMMON, __sentinel__(0))))
 char* libstring_vcat(const char*, ... /*, (char*)0 */);
@@ -425,8 +429,9 @@ char* libstring_replace(const char*, const char*, const char*, enum libstring_re
 /**
  * `r = libstring_shellsafe(s)` is equivalent to
  * `t = libstring_replace(s, "'", "'\''", 0);
- *  if ((r = malloc(strlen(t) + 3)))
+ *  if (t && (r = malloc(strlen(t) + 3)))
  *    *r = '\'', strcpy(stpcpy(r + 1, t), "'");
+ *  saved_errno = errno, free(t), errno = saved_errno;
  *  r;`.
  * You guess what it does, and why.
  * 
